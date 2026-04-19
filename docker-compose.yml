@@ -1,0 +1,100 @@
+services:
+  database:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-transportation_management_system}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-transportation_management_system}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: pj_backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:             # <--- Add this
+      - pj_backend/.env   # <--- Add this
+    environment:
+      - APP_ENV=${APP_ENV:-production}
+      - APP_DEBUG=${APP_DEBUG:-false}
+    # environment:
+    #   - APP_ENV=${APP_ENV:-production}
+    #   - APP_DEBUG=${APP_DEBUG:-false}
+    #   - APP_URL=${API_BASE_URL:-http://localhost:8000}
+    #   - APP_KEY=${APP_KEY:-}
+    #   - DB_CONNECTION=pgsql
+    #   - DB_HOST=database
+    #   - DB_PORT=5432
+    #   - DB_DATABASE=${DB_DATABASE:-transportation_management_system}
+    #   - DB_USERNAME=${DB_USERNAME:-postgres}
+    #   - DB_PASSWORD=${DB_PASSWORD:-password}
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - api_storage:/var/www/storage
+    ports:
+      - "8000:80"
+
+  admin:
+    build:
+      context: .
+      dockerfile: docker/flutter_web.Dockerfile
+      args:
+        APP_DIR: pj_admin
+        BASE_URL: ${API_BASE_URL:-http://localhost:8000}
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+  staff:
+    build:
+      context: .
+      dockerfile: docker/flutter_web.Dockerfile
+      args:
+        APP_DIR: pj_staff
+        BASE_URL: ${API_BASE_URL:-http://localhost:8000}
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "8081:80"
+
+  customer:
+    build:
+      context: .
+      dockerfile: docker/flutter_web.Dockerfile
+      args:
+        APP_DIR: pj_customer
+        BASE_URL: ${API_BASE_URL:-http://localhost:8000}
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "8082:80"
+
+  driver:
+    build:
+      context: .
+      dockerfile: docker/flutter_web.Dockerfile
+      args:
+        APP_DIR: pj_driver
+        BASE_URL: ${API_BASE_URL:-http://localhost:8000}
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "8083:80"
+
+volumes:
+  pgdata:
+  api_storage:

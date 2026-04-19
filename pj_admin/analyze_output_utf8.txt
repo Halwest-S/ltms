@@ -1,0 +1,19 @@
+﻿Analyzing pj_admin...
+
+  error - lib\src\features\dashboard\dashboard_screen.dart:154:43 - The getter 'changeAdminKey' isn't defined for the type 'L10n'. Try importing the library that defines 'changeAdminKey', correcting the name to the name of an existing getter, or defining a getter or field named 'changeAdminKey'. - undefined_getter
+  error - lib\src\features\dashboard\dashboard_screen.dart:158:40 - The getter 'keyExpiredMessage' isn't defined for the type 'L10n'. Try importing the library that defines 'keyExpiredMessage', correcting the name to the name of an existing getter, or defining a getter or field named 'keyExpiredMessage'. - undefined_getter
+  error - lib\src\features\dashboard\dashboard_screen.dart:168:49 - The getter 'generateNewKey' isn't defined for the type 'L10n'. Try importing the library that defines 'generateNewKey', correcting the name to the name of an existing getter, or defining a getter or field named 'generateNewKey'. - undefined_getter
+  error - lib\src\features\dashboard\dashboard_screen.dart:354:67 - The getter 'id' isn't defined for the type 'L10n'. Try importing the library that defines 'id', correcting the name to the name of an existing getter, or defining a getter or field named 'id'. - undefined_getter
+  error - lib\src\features\dashboard\dashboard_screen.dart:357:67 - The getter 'weightLabel' isn't defined for the type 'L10n'. Try importing the library that defines 'weightLabel', correcting the name to the name of an existing getter, or defining a getter or field named 'weightLabel'. - undefined_getter
+  error - lib\src\features\dashboard\dashboard_screen.dart:360:67 - The getter 'priceLabel' isn't defined for the type 'L10n'. Try importing the library that defines 'priceLabel', correcting the name to the name of an existing getter, or defining a getter or field named 'priceLabel'. - undefined_getter
+  error - lib\src\features\dashboard\dashboard_screen.dart:363:67 - The getter 'statusLabel' isn't defined for the type 'L10n'. Try importing the library that defines 'statusLabel', correcting the name to the name of an existing getter, or defining a getter or field named 'statusLabel'. - undefined_getter
+  error - lib\src\features\dashboard\dashboard_screen.dart:565:59 - The getter 'adminRole' isn't defined for the type 'L10n'. Try importing the library that defines 'adminRole', correcting the name to the name of an existing getter, or defining a getter or field named 'adminRole'. - undefined_getter
+  error - lib\src\features\dashboard\dashboard_screen.dart:573:45 - The getter 'adminRole' isn't defined for the type 'L10n'. Try importing the library that defines 'adminRole', correcting the name to the name of an existing getter, or defining a getter or field named 'adminRole'. - undefined_getter
+  error - lib\src\features\dashboard\shipment_monitor.dart:23:15 - Undefined name 'columns'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\src\features\dashboard\shipment_monitor.dart:23:22 - Expected to find ']'. - expected_token
+  error - lib\src\features\dashboard\shipment_monitor.dart:42:23 - Undefined name 'ShipmentStatus'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\src\features\dashboard\shipment_monitor.dart:43:23 - Undefined name 'ShipmentStatus'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\src\features\dashboard\shipment_monitor.dart:44:23 - Undefined name 'ShipmentStatus'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\src\features\dashboard\shipment_monitor.dart:45:23 - Undefined name 'ShipmentStatus'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+
+15 issues found.

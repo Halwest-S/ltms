@@ -1,0 +1,6 @@
+﻿Analyzing ....
+
+  error - lib\src\features\auth\login_screen.dart:289:42 - Undefined name 'localeProvider'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\src\features\auth\login_screen.dart:295:43 - Undefined name 'localeProvider'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+
+2 issues found.

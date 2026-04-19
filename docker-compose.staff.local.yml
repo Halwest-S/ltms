@@ -1,0 +1,68 @@
+services:
+  database:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-transportation_management_system}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-transportation_management_system}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: pj_backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - pj_backend/.env
+    ports:
+      - "${API_PORT:-8000}:80"
+    environment:
+      APP_ENV: ${APP_ENV:-production}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      APP_URL: ${API_BASE_URL:-http://localhost:8000}
+      LOG_CHANNEL: ${LOG_CHANNEL:-stderr}
+      FILESYSTEM_DISK: public
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      DB_CONNECTION: pgsql
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-transportation_management_system}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      SEED_SUPER_ADMIN_EMAIL: ${SEED_SUPER_ADMIN_EMAIL:-admin@ltms.app}
+      SEED_SUPER_ADMIN_PASSWORD: ${SEED_SUPER_ADMIN_PASSWORD:-password}
+      SEED_STAFF_EMAIL: ${SEED_STAFF_EMAIL:-staff@ltms.app}
+      SEED_STAFF_PASSWORD: ${SEED_STAFF_PASSWORD:-password}
+      SEED_DRIVER_EMAIL: ${SEED_DRIVER_EMAIL:-driver@ltms.app}
+      SEED_DRIVER_PASSWORD: ${SEED_DRIVER_PASSWORD:-password}
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - api_storage:/var/www/storage
+
+  staff:
+    build:
+      context: .
+      dockerfile: docker/flutter_web.Dockerfile
+      args:
+        APP_DIR: pj_staff
+        BASE_URL: ${API_BASE_URL:-http://localhost:8000}
+    restart: unless-stopped
+    ports:
+      - "${STAFF_PORT:-80}:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  api_storage:

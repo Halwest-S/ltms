@@ -1,0 +1,110 @@
+services:
+  database:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-transportation_management_system}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    ports:
+      - "${DB_EXPOSE_PORT:-5433}:5432"
+    volumes:
+      - pgdata_full_local:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-transportation_management_system}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: pj_backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - pj_backend/.env
+    ports:
+      - "${API_PORT:-8000}:80"
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_URL: ${API_BASE_URL:-http://localhost:8000}
+      LOG_CHANNEL: ${LOG_CHANNEL:-stderr}
+      FILESYSTEM_DISK: public
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      DB_CONNECTION: pgsql
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-transportation_management_system}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      SEED_SUPER_ADMIN_EMAIL: ${SEED_SUPER_ADMIN_EMAIL:-admin@ltms.app}
+      SEED_SUPER_ADMIN_PASSWORD: ${SEED_SUPER_ADMIN_PASSWORD:-password}
+      SEED_SUPER_ADMIN_KEY: ${SEED_SUPER_ADMIN_KEY:-11111111-1111-1111-1111-111111111111}
+      SEED_STAFF_EMAIL: ${SEED_STAFF_EMAIL:-staff@ltms.app}
+      SEED_STAFF_PASSWORD: ${SEED_STAFF_PASSWORD:-password}
+      SEED_DRIVER_EMAIL: ${SEED_DRIVER_EMAIL:-driver@ltms.app}
+      SEED_DRIVER_PASSWORD: ${SEED_DRIVER_PASSWORD:-password}
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - api_storage_full_local:/var/www/storage
+
+#   admin:
+#     build:
+#       context: .
+#       dockerfile: docker/flutter_web.Dockerfile
+#       args:
+#         APP_DIR: pj_admin
+#         BASE_URL: ${API_BASE_URL:-http://localhost:8000}
+#     restart: unless-stopped
+#     ports:
+#       - "${ADMIN_PORT:-8080}:80"
+#     depends_on:
+#       - api
+# 
+#   staff:
+#     build:
+#       context: .
+#       dockerfile: docker/flutter_web.Dockerfile
+#       args:
+#         APP_DIR: pj_staff
+#         BASE_URL: ${API_BASE_URL:-http://localhost:8000}
+#     restart: unless-stopped
+#     ports:
+#       - "${STAFF_PORT:-8081}:80"
+#     depends_on:
+#       - api
+# 
+#   customer:
+#     build:
+#       context: .
+#       dockerfile: docker/flutter_web.Dockerfile
+#       args:
+#         APP_DIR: pj_customer
+#         BASE_URL: ${API_BASE_URL:-http://localhost:8000}
+#     restart: unless-stopped
+#     ports:
+#       - "${CUSTOMER_PORT:-8082}:80"
+#     depends_on:
+#       - api
+# 
+#   driver:
+#     build:
+#       context: .
+#       dockerfile: docker/flutter_web.Dockerfile
+#       args:
+#         APP_DIR: pj_driver
+#         BASE_URL: ${API_BASE_URL:-http://localhost:8000}
+#     restart: unless-stopped
+#     ports:
+#       - "${DRIVER_PORT:-8083}:80"
+#     depends_on:
+#       - api
+
+volumes:
+  pgdata_full_local:
+  api_storage_full_local:

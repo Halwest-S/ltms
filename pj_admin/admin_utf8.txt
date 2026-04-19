@@ -1,0 +1,22 @@
+﻿Analyzing pj_admin...                                           
+
+   info - Statements in an if should be enclosed in a block - lib\src\features\auth\login_screen.dart:408:41 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\src\features\auth\login_screen.dart:410:41 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\src\features\auth\login_screen.dart:441:41 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\src\features\auth\login_screen.dart:443:41 - curly_braces_in_flow_control_structures
+  error - The getter 'faqCrudPlaceholder' isn't defined for the type 'L10n' - lib\src\features\faq\faq_management_screen.dart:11:50 - undefined_getter
+  error - Undefined name 'L10n' - lib\src\features\reports\admin_report_screen.dart:20:63 - undefined_identifier
+  error - Undefined name 'L10n' - lib\src\features\reports\admin_report_screen.dart:79:52 - undefined_identifier
+   info - Parameter 'key' could be a super parameter - lib\src\features\settings\settings_screen.dart:10:9 - use_super_parameters
+  error - Undefined name 'l10n' - lib\src\features\shipments\shipment_detail_screen.dart:86:55 - undefined_identifier
+  error - Undefined name 'l10n' - lib\src\features\shipments\shipment_detail_screen.dart:88:55 - undefined_identifier
+  error - Undefined name 'l10n' - lib\src\features\shipments\shipment_detail_screen.dart:103:34 - undefined_identifier
+  error - Undefined name 'l10n' - lib\src\features\shipments\shipment_detail_screen.dart:105:40 - undefined_identifier
+  error - Undefined name 'l10n' - lib\src\features\shipments\shipment_detail_screen.dart:106:40 - undefined_identifier
+  error - Undefined name 'l10n' - lib\src\features\shipments\shipment_detail_screen.dart:107:40 - undefined_identifier
+  error - Undefined name 'l10n' - lib\src\features\shipments\shipment_detail_screen.dart:108:40 - undefined_identifier
+  error - Undefined name 'l10n' - lib\src\features\shipments\shipment_detail_screen.dart:157:37 - undefined_identifier
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\src\features\users\create_user_dialog.dart:130:17 - deprecated_member_use
+  error - Undefined name 'L10n' - lib\src\features\vehicles\vehicle_management_screen.dart:9:34 - undefined_identifier
+  error - Undefined name 'L10n' - lib\src\features\vehicles\vehicle_management_screen.dart:10:32 - undefined_identifier
+

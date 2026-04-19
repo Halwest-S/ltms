@@ -1,0 +1,78 @@
+# ===========================
+# Flutter / Dart
+# ===========================
+# Build outputs
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.pub-cache/
+**/.pub/
+**/pubspec.lock
+
+# Generated files
+**/*.g.dart
+**/*.freezed.dart
+
+# IDE files
+**/.idea/
+**/*.iml
+**/.vscode/
+**/*.suo
+**/*.user
+
+# iOS / macOS ephemeral
+**/ios/Flutter/ephemeral/
+**/macos/Flutter/ephemeral/
+**/linux/flutter/ephemeral/
+
+# Generated plugin registrants (platform-specific build files)
+**/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+**/ios/Runner/GeneratedPluginRegistrant.h
+**/ios/Runner/GeneratedPluginRegistrant.m
+**/macos/Runner/GeneratedPluginRegistrant.swift
+
+# Gradle
+**/.gradle/
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+
+# Windows ephemeral DLLs
+**/windows/flutter/ephemeral/
+
+# ===========================
+# PHP / Laravel / Composer
+# ===========================
+# vendor/ is intentionally TRACKED so the VPS Docker build can copy it
+# directly, avoiding composer install on low-RAM servers.
+pj_backend/.env
+pj_backend/storage/logs/*.log
+pj_backend/storage/framework/cache/
+pj_backend/storage/framework/sessions/
+pj_backend/storage/framework/views/
+pj_backend/bootstrap/cache/
+
+# ===========================
+# Docker
+# ===========================
+# No Docker artifacts to ignore usually, keep docker-compose files
+
+# ===========================
+# OS files
+# ===========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===========================
+# Temp / logs
+# ===========================
+*.log
+*.tmp
+*.bak
+
+# Local installers/downloads
+.downloads/
+*.exe

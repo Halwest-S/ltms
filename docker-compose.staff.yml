@@ -1,0 +1,11 @@
+services:
+  staff:
+    image: ghcr.io/halwestqa8/stock-exchange-project-staff:latest
+    pull_policy: always
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
