@@ -205,6 +205,7 @@ class _PricingConfigScreenState extends ConsumerState<PricingConfigScreen> {
         setState(() {
           _applyConfig(savedConfig);
         });
+        ref.invalidate(pricingProvider);
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
@@ -244,14 +245,17 @@ class _PricingConfigScreenState extends ConsumerState<PricingConfigScreen> {
       title: l10n.pricingConfiguration,
       actions: [
         IconButton(
-          onPressed: () => ref.refresh(pricingProvider),
+          onPressed: () {
+            setState(() => _hasInitializedForm = false);
+            ref.invalidate(pricingProvider);
+          },
           tooltip: l10n.refresh,
           icon: const Icon(Icons.refresh_rounded),
         ),
       ],
       child: pricingAsync.when(
         data: (config) {
-          if (!_hasInitializedForm || (!_isDirty && !_isSaving)) {
+          if (!_hasInitializedForm) {
             _applyConfig(config);
           }
 
@@ -394,9 +398,7 @@ class _PricingConfigScreenState extends ConsumerState<PricingConfigScreen> {
                                   child: Text(l10n.cancel),
                                 ),
                                 ElevatedButton.icon(
-                                  onPressed: _isSaving || !_isDirty
-                                      ? null
-                                      : _savePricing,
+                                  onPressed: _isSaving ? null : _savePricing,
                                   icon: _isSaving
                                       ? const SizedBox(
                                           width: 16,
