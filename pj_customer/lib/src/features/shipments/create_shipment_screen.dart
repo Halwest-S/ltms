@@ -257,7 +257,7 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
       padding: const EdgeInsets.fromLTRB(18, 10, 18, 24),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 760),
+          constraints: const BoxConstraints(maxWidth: 980),
           child: child,
         ),
       ),
@@ -270,22 +270,12 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            _t(
-              ku: 'بەرهەمەکەت لە سەرچاوەی دەرەوە هەڵبژێرە',
-              en: 'Choose the product externally',
-            ),
-            style: tt.displaySmall,
+          _productHeroCard(tt),
+          const SizedBox(height: 18),
+          _sectionLabel(
+            _t(ku: 'بازاڕە فەرمییەکان', en: 'Official marketplaces'),
           ),
-          const SizedBox(height: 6),
-          Text(
-            _t(
-              ku: 'ماڵپەڕی ئەمازۆن یان عەلی‌بابا لە دەرەوە دەکرێتەوە؛ دواتر لینکی بەرهەمەکە لێرە دابنێ.',
-              en: 'Amazon or Alibaba opens outside LTMS; paste the product link here when you return.',
-            ),
-            style: tt.bodyMedium?.copyWith(color: AppTheme.muted),
-          ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           LayoutBuilder(
             builder: (context, constraints) {
               final isWide = constraints.maxWidth >= 600;
@@ -313,46 +303,7 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
             },
           ),
           const SizedBox(height: 18),
-          _sectionCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  _t(ku: 'لینکی بەرهەم', en: 'Product link'),
-                  style: tt.labelLarge,
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _productUrlCtrl,
-                  keyboardType: TextInputType.url,
-                  textDirection: TextDirection.ltr,
-                  decoration: InputDecoration(
-                    hintText: 'https://www.amazon.com/.../dp/...',
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.verified_outlined),
-                      tooltip: _t(ku: 'پشتڕاستکردنەوە', en: 'Validate'),
-                      onPressed: _isLoadingProduct ? null : _previewProductLink,
-                    ),
-                  ),
-                  onSubmitted: (_) => _previewProductLink(),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
-                  onPressed: _isLoadingProduct ? null : _previewProductLink,
-                  icon: _isLoadingProduct
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.check_circle_outline),
-                  label: Text(
-                    _t(ku: 'پشتڕاستکردنەوەی لینک', en: 'Validate Link'),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _linkInputCard(tt),
           if (_productPreview != null) ...[
             const SizedBox(height: 12),
             _productPreviewCard(tt),
@@ -369,37 +320,350 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
     );
   }
 
-  Widget _platformCard(_Marketplace platform) {
-    final isDetected = _productPreview?['platform'] == platform.id;
+  Widget _productHeroCard(TextTheme tt) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppTheme.ink,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.ink.withAlpha(18),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth >= 680;
+          final intro = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: Colors.white.withAlpha(18),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.shopping_bag_outlined,
+                  color: AppTheme.teal,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                _t(
+                  ku: 'کاڵاکەت لە دەرەوە هەڵبژێرە',
+                  en: 'Choose your product outside LTMS',
+                ),
+                style: tt.headlineLarge?.copyWith(color: Colors.white),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                _t(
+                  ku: 'ئەمازۆن یان عەلیبابا بکەرەوە، لینکی کاڵاکە کۆپی بکە، پاشان لێرە دایبنێ بۆ دروستکردنی داواکاری هاوردە.',
+                  en: 'Open Amazon or Alibaba, copy the product link, then paste it here to start your import request.',
+                ),
+                style: tt.bodyMedium?.copyWith(
+                  color: Colors.white.withAlpha(178),
+                  height: 1.45,
+                ),
+              ),
+            ],
+          );
 
-    return _sectionCard(
-      borderColor: isDetected ? AppTheme.teal : AppTheme.border,
-      backgroundColor: isDetected ? AppTheme.tealLight : AppTheme.card,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          final steps = Column(
+            children: [
+              _heroStep(
+                number: '1',
+                icon: Icons.open_in_new_rounded,
+                label: _t(ku: 'ماڵپەڕ بکەرەوە', en: 'Open site'),
+              ),
+              const SizedBox(height: 8),
+              _heroStep(
+                number: '2',
+                icon: Icons.link_rounded,
+                label: _t(ku: 'لینک کۆپی بکە', en: 'Copy link'),
+              ),
+              const SizedBox(height: 8),
+              _heroStep(
+                number: '3',
+                icon: Icons.verified_outlined,
+                label: _t(ku: 'لێرە پشتڕاستی بکەوە', en: 'Validate here'),
+              ),
+            ],
+          );
+
+          if (!isWide) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [intro, const SizedBox(height: 16), steps],
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: intro),
+              const SizedBox(width: 24),
+              SizedBox(width: 230, child: steps),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _heroStep({
+    required String number,
+    required IconData icon,
+    required String label,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withAlpha(18),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withAlpha(26)),
+      ),
+      child: Row(
         children: [
-          SizedBox(
-            height: 38,
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: SvgPicture.asset(
-                platform.logoAsset,
-                width: platform.logoWidth,
-                fit: BoxFit.contain,
-                semanticsLabel: platform.name,
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: AppTheme.teal,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              number,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 12,
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          Text(platform.name, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 10),
-          OutlinedButton.icon(
-            onPressed: () => _openMarketplace(platform),
-            icon: const Icon(Icons.open_in_new),
-            label: Text(
-              _t(ku: 'کردنەوەی ماڵپەڕ', en: 'Open Official Site'),
-              overflow: TextOverflow.ellipsis,
+          const SizedBox(width: 10),
+          Icon(icon, color: Colors.white, size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionLabel(String label) {
+    return Text(
+      label.toUpperCase(),
+      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+        color: AppTheme.ink,
+        fontWeight: FontWeight.w900,
+      ),
+    );
+  }
+
+  Widget _platformCard(_Marketplace platform) {
+    final isDetected = _productPreview?['platform'] == platform.id;
+
+    return InkWell(
+      onTap: () => _openMarketplace(platform),
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDetected ? AppTheme.tealLight : AppTheme.card,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isDetected ? AppTheme.teal : AppTheme.border,
+            width: isDetected ? 1.5 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(10),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 44,
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: SvgPicture.asset(
+                        platform.logoAsset,
+                        width: platform.logoWidth,
+                        fit: BoxFit.contain,
+                        semanticsLabel: platform.name,
+                      ),
+                    ),
+                  ),
+                ),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: isDetected ? AppTheme.teal : AppTheme.tealLight,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    isDetected
+                        ? Icons.check_rounded
+                        : Icons.open_in_new_rounded,
+                    size: 18,
+                    color: isDetected ? Colors.white : AppTheme.teal,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(platform.name, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 4),
+            Text(
+              _t(
+                ku: 'ماڵپەڕی فەرمی بۆ دۆزینەوە و کۆپیکردنی لینکی کاڵا',
+                en: 'Official marketplace for finding and copying a product link',
+              ),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 14),
+            Container(
+              height: 44,
+              decoration: BoxDecoration(
+                color: isDetected ? AppTheme.teal : AppTheme.surface,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isDetected ? AppTheme.teal : AppTheme.border,
+                ),
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.open_in_new_rounded,
+                      size: 17,
+                      color: isDetected ? Colors.white : AppTheme.ink,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      _t(ku: 'کردنەوەی ماڵپەڕ', en: 'Open Official Site'),
+                      style: TextStyle(
+                        color: isDetected ? Colors.white : AppTheme.ink,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _linkInputCard(TextTheme tt) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.card,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppTheme.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(10),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: AppTheme.tealLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.link_rounded, color: AppTheme.teal),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _t(
+                        ku: 'لینکی کاڵاکە دابنێ',
+                        en: 'Paste the product link',
+                      ),
+                      style: tt.titleMedium,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      _t(
+                        ku: 'تەنها لینکی بەرهەمی ئەمازۆن یان عەلیبابا پشتڕاست دەکرێتەوە.',
+                        en: 'Only Amazon or Alibaba product links are validated here.',
+                      ),
+                      style: tt.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          TextField(
+            controller: _productUrlCtrl,
+            keyboardType: TextInputType.url,
+            textDirection: TextDirection.ltr,
+            decoration: InputDecoration(
+              hintText: 'https://www.amazon.com/.../dp/...',
+              prefixIcon: const Icon(Icons.travel_explore_rounded),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.verified_outlined),
+                tooltip: _t(ku: 'پشتڕاستکردنەوە', en: 'Validate'),
+                onPressed: _isLoadingProduct ? null : _previewProductLink,
+              ),
+            ),
+            onSubmitted: (_) => _previewProductLink(),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _isLoadingProduct ? null : _previewProductLink,
+            icon: _isLoadingProduct
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.check_circle_outline_rounded),
+            label: Text(_t(ku: 'پشتڕاستکردنەوەی لینک', en: 'Validate Link')),
           ),
         ],
       ),
