@@ -161,4 +161,103 @@ class ShipmentAccessAndSearchTest extends TestCase
             ->assertJsonPath('data.0.customer.role', 'customer')
             ->assertJsonPath('data.0.customer.phone_number', '+9647501234567');
     }
+
+    public function test_customer_can_confirm_their_delivered_shipment(): void
+    {
+        [$category, $vehicleType] = $this->seedCatalog();
+
+        $customer = User::factory()->create([
+            'role' => 'customer',
+            'is_active' => true,
+        ]);
+
+        $shipment = Shipment::create([
+            'customer_id' => $customer->id,
+            'origin' => 'Erbil Warehouse',
+            'destination' => 'Baghdad Center',
+            'weight_kg' => 3.5,
+            'category_id' => $category->id,
+            'vehicle_type_id' => $vehicleType->id,
+            'price_breakdown' => ['base_price' => 15, 'weight_cost' => 8.75],
+            'total_price' => 23.75,
+            'estimated_delivery_days' => 4,
+            'status' => 'delivered',
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->patchJson("/api/v1/shipments/{$shipment->id}/status", [
+            'status' => 'delivered',
+        ])->assertOk()
+            ->assertJsonPath('id', $shipment->id)
+            ->assertJsonPath('status', 'delivered')
+            ->assertJsonStructure(['delivery_confirmed_at']);
+
+        $this->assertNotNull($shipment->fresh()->delivery_confirmed_at);
+    }
+
+    public function test_customer_cannot_mark_pending_shipment_delivered(): void
+    {
+        [$category, $vehicleType] = $this->seedCatalog();
+
+        $customer = User::factory()->create([
+            'role' => 'customer',
+            'is_active' => true,
+        ]);
+
+        $shipment = Shipment::create([
+            'customer_id' => $customer->id,
+            'origin' => 'Erbil Warehouse',
+            'destination' => 'Baghdad Center',
+            'weight_kg' => 3.5,
+            'category_id' => $category->id,
+            'vehicle_type_id' => $vehicleType->id,
+            'price_breakdown' => ['base_price' => 15, 'weight_cost' => 8.75],
+            'total_price' => 23.75,
+            'estimated_delivery_days' => 4,
+            'status' => 'pending',
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->patchJson("/api/v1/shipments/{$shipment->id}/status", [
+            'status' => 'delivered',
+        ])->assertForbidden();
+    }
+
+    public function test_customer_cannot_report_a_confirmed_delivered_shipment(): void
+    {
+        [$category, $vehicleType] = $this->seedCatalog();
+
+        $customer = User::factory()->create([
+            'role' => 'customer',
+            'is_active' => true,
+        ]);
+
+        $shipment = Shipment::create([
+            'customer_id' => $customer->id,
+            'origin' => 'Erbil Warehouse',
+            'destination' => 'Baghdad Center',
+            'weight_kg' => 3.5,
+            'category_id' => $category->id,
+            'vehicle_type_id' => $vehicleType->id,
+            'price_breakdown' => ['base_price' => 15, 'weight_cost' => 8.75],
+            'total_price' => 23.75,
+            'estimated_delivery_days' => 4,
+            'status' => 'delivered',
+            'delivery_confirmed_at' => now(),
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson('/api/v1/reports', [
+            'shipment_id' => $shipment->id,
+            'customer_comment' => 'The package has an issue.',
+        ])->assertStatus(422)
+            ->assertJsonFragment([
+                'message' => 'This shipment has already been confirmed as delivered.',
+            ]);
+
+        $this->assertDatabaseCount('reports', 0);
+    }
 }

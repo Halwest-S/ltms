@@ -115,6 +115,22 @@ class ShipmentController extends Controller
         $shipment = Shipment::findOrFail($id);
         $user = $request->user();
 
+        if ($user->role === 'customer') {
+            if ($shipment->customer_id !== $user->id) {
+                return response()->json(['message' => 'Unauthorized.'], 403);
+            }
+
+            if ($request->status === 'delivered' && $shipment->status === 'delivered') {
+                if ($shipment->delivery_confirmed_at === null) {
+                    $shipment->update(['delivery_confirmed_at' => now()]);
+                }
+
+                return response()->json($shipment->load($this->shipmentRelations()));
+            }
+
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
         if ($user->role === 'driver' && $shipment->driver_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized.'], 403);
         }

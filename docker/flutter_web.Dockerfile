@@ -30,6 +30,12 @@ COPY pj_customer ./pj_customer
 COPY pj_driver ./pj_driver
 COPY pj_staff ./pj_staff
 
+# Generated Freezed/JSON model files are ignored in Git, so produce them inside
+# the image before building any app that depends on pj_domain.
+WORKDIR /app/packages/pj_domain
+RUN flutter pub get
+RUN dart run build_runner build --delete-conflicting-outputs
+
 # Argument for the specific app to build
 ARG APP_DIR
 ARG BASE_URL

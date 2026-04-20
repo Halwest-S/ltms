@@ -22,7 +22,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/shipments', [ShipmentController::class, 'index']);
         Route::post('/shipments', [ShipmentController::class, 'store']);
         Route::get('/shipments/{id}', [ShipmentController::class, 'show']);
-        Route::post('/shipments/{id}/status', [ShipmentController::class, 'updateStatus']);
+        Route::patch('/shipments/{id}/status', [ShipmentController::class, 'updateStatus']);
         Route::patch('/shipments/{id}/assign', [ShipmentController::class, 'assignDriver']);
         Route::get('/pricing/calculate', [ShipmentController::class, 'calculatePreview']);
 

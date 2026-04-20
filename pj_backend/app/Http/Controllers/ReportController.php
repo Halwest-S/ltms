@@ -35,6 +35,12 @@ class ReportController extends Controller
             return response()->json(['message' => 'Unauthorized.'], 403);
         }
 
+        if ($shipment->delivery_confirmed_at !== null) {
+            return response()->json([
+                'message' => 'This shipment has already been confirmed as delivered.',
+            ], 422);
+        }
+
         $report = Report::create([
             'shipment_id' => $shipment->id,
             'customer_comment' => $request->customer_comment,

@@ -25,6 +25,7 @@ class Shipment extends Model
         'total_price',
         'estimated_delivery_days',
         'status',
+        'delivery_confirmed_at',
     ];
 
     protected $casts = [
@@ -37,6 +38,7 @@ class Shipment extends Model
         'category_id' => 'integer',
         'vehicle_type_id' => 'integer',
         'driver_id' => 'integer',
+        'delivery_confirmed_at' => 'datetime',
     ];
 
     public function customer(): BelongsTo

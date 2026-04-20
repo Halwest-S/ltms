@@ -28,8 +28,10 @@ class Shipment with _$Shipment {
     @JsonKey(name: 'category_id') required int categoryId,
     @JsonKey(name: 'vehicle_type_id') required int vehicleTypeId,
     @JsonKey(name: 'total_price') required double totalPrice,
-    @JsonKey(name: 'estimated_delivery_days') required int estimatedDeliveryDays,
+    @JsonKey(name: 'estimated_delivery_days')
+    required int estimatedDeliveryDays,
     @Default(ShipmentStatus.pending) ShipmentStatus status,
+    @JsonKey(name: 'delivery_confirmed_at') DateTime? deliveryConfirmedAt,
     Category? category,
     @JsonKey(name: 'vehicle_type') VehicleType? vehicleType,
     User? customer,
@@ -37,5 +39,6 @@ class Shipment with _$Shipment {
     @JsonKey(name: 'price_breakdown') Map<String, dynamic>? priceBreakdown,
   }) = _Shipment;
 
-  factory Shipment.fromJson(Map<String, dynamic> json) => _$ShipmentFromJson(json);
+  factory Shipment.fromJson(Map<String, dynamic> json) =>
+      _$ShipmentFromJson(json);
 }
