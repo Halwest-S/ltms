@@ -318,9 +318,9 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             ListTile(
               leading: const Icon(Icons.language_rounded),
-              title: const Text(
-                'English',
-                style: TextStyle(fontWeight: FontWeight.w700),
+              title: Text(
+                l10n.english,
+                style: const TextStyle(fontWeight: FontWeight.w700),
               ),
               trailing: l10n.localeName == 'en'
                   ? const Icon(Icons.check_circle, color: AppTheme.blue)
@@ -332,9 +332,9 @@ class ProfileScreen extends ConsumerWidget {
             ),
             ListTile(
               leading: const Icon(Icons.translate_rounded),
-              title: const Text(
-                'Kurdish',
-                style: TextStyle(fontWeight: FontWeight.w700),
+              title: Text(
+                l10n.kurdish,
+                style: const TextStyle(fontWeight: FontWeight.w700),
               ),
               trailing: l10n.localeName == 'ku'
                   ? const Icon(Icons.check_circle, color: AppTheme.blue)

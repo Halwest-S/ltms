@@ -594,8 +594,11 @@ class L10nEn extends L10n {
   String get confirmDelivery => 'Confirm Delivery';
 
   @override
-  String get deliveredSuccessfully =>
+  String get confirmDeliveryQuestion =>
       'Has your shipment been delivered successfully?';
+
+  @override
+  String get deliveredSuccessfully => 'Shipment delivered successfully.';
 
   @override
   String get myAssignments => 'MY ASSIGNMENTS';

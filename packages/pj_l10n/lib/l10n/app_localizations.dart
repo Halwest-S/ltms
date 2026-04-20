@@ -1249,10 +1249,16 @@ abstract class L10n {
   /// **'Confirm Delivery'**
   String get confirmDelivery;
 
-  /// No description provided for @deliveredSuccessfully.
+  /// No description provided for @confirmDeliveryQuestion.
   ///
   /// In en, this message translates to:
   /// **'Has your shipment been delivered successfully?'**
+  String get confirmDeliveryQuestion;
+
+  /// No description provided for @deliveredSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipment delivered successfully.'**
   String get deliveredSuccessfully;
 
   /// No description provided for @myAssignments.

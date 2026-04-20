@@ -12,13 +12,13 @@ class L10nKu extends L10n {
   String get appTitle => 'LTMS';
 
   @override
-  String get appSubtitle => 'سیستەمی بەڕێوەبردنی گواستنەوە و ئtransport';
+  String get appSubtitle => 'سیستەمی بەڕێوەبردنی گواستنەوە و لۆجستیک';
 
   @override
   String get login => 'چوونەژوورەوە';
 
   @override
-  String get logout => 'دەرچوون';
+  String get logout => 'چوونەدەرەوە';
 
   @override
   String get register => 'خۆتۆمارکردن';
@@ -30,7 +30,7 @@ class L10nKu extends L10n {
   String get password => 'وشەی نهێنی';
 
   @override
-  String get confirmPassword => 'دڵنیابوونەوەی وشەی نهێنی';
+  String get confirmPassword => 'دووبارەکردنەوەی وشەی نهێنی';
 
   @override
   String get forgotPassword => 'وشەی نهێنیت لەبیرکردووە؟';
@@ -45,10 +45,10 @@ class L10nKu extends L10n {
   String get welcomeBack => 'بەخێرهاتیتەوە';
 
   @override
-  String get createAccount => 'هەژمار دروست بکە';
+  String get createAccount => 'دروستکردنی هەژمار';
 
   @override
-  String get home => 'پەڕەی سەرەکی';
+  String get home => 'سەرەکی';
 
   @override
   String get dashboard => 'داشبۆرد';
@@ -60,13 +60,13 @@ class L10nKu extends L10n {
   String get myShipments => 'بارەکانم';
 
   @override
-  String get assignedShipments => 'بارەکانی ئەسپاردراو';
+  String get assignedShipments => 'بارە سپێردراوەکان';
 
   @override
-  String get reports => 'راپۆرتەکان';
+  String get reports => 'ڕاپۆرتەکان';
 
   @override
-  String get notifications => 'ئاگانامەکان';
+  String get notifications => 'ئاگادارکردنەوەکان';
 
   @override
   String shipmentsCount(int count) {
@@ -85,13 +85,14 @@ class L10nKu extends L10n {
   String get categories => 'پۆلەکان';
 
   @override
-  String get vehicles => 'ئامێرەکان';
+  String get vehicles => 'هۆکارەکانی گواستنەوە';
 
   @override
-  String get vehicleTypes => 'جۆرەکانی ئامێر';
+  String get vehicleTypes => 'جۆرەکانی گواستنەوە';
 
   @override
-  String get vehicleCrudPlaceholder => 'ڕێکخستنی ئامێر';
+  String get vehicleCrudPlaceholder =>
+      'ناوەڕۆکی بەڕێوەبردنی هۆکارەکانی گواستنەوە';
 
   @override
   String get sent => 'نێردراو';
@@ -103,17 +104,16 @@ class L10nKu extends L10n {
   String get customersTab => 'کڕیاران';
 
   @override
-  String get logisticsPortal => 'دەرگای بەڕێوەبردنی لۆجیستی';
+  String get logisticsPortal => 'پۆرتاڵی بەڕێوەبردنی لۆجستیک';
 
   @override
   String get sendUpdatesSubtitle => 'ناردنی نوێکاری بۆ کڕیاران';
 
   @override
-  String get signOutConfirmStaff =>
-      'ئایا دڵنیایت لە چوونە دەرەوە لە پۆرتاڵی کارمەند؟';
+  String get signOutConfirmStaff => 'ئایا دڵنیایت لە چوونەدەرەوە؟';
 
   @override
-  String get manageAccount => 'بەڕێوەبردنی ئەکاونت و هەڵبژاردنەکان';
+  String get manageAccount => 'بەڕێوەبردنی هەژمارەکەت';
 
   @override
   String get usernameLabel => 'ناوی بەکارهێنەر';
@@ -122,7 +122,7 @@ class L10nKu extends L10n {
   String get appSettings => 'ڕێکخستنەکانی ئەپ';
 
   @override
-  String get support => 'پاڵپشتی';
+  String get support => 'پشتگیری';
 
   @override
   String get deliverBtn => 'گەیاندن';
@@ -155,34 +155,34 @@ class L10nKu extends L10n {
   String get confirmNewPasswordLabel => 'دووبارەکردنەوەی وشەی نهێنی نوێ';
 
   @override
-  String get priceBreakdownTitle => 'پوختەی نرخ';
+  String get priceBreakdownTitle => 'وردەکاریی نرخ';
 
   @override
-  String get baseWeightSurcharge => 'بنەکە + کێش + زیادە';
+  String get baseWeightSurcharge => 'نرخی بنەڕەت + کێش + زیادەی نرخ';
 
   @override
-  String get vehicleMultiplier => 'زێدەکەری ئامێر';
+  String get vehicleMultiplier => 'جارکەری هۆکاری گواستنەوە';
 
   @override
-  String get totalPaid => 'کۆی پارەدانراو';
+  String get totalPaid => 'کۆی پارەی دراو';
 
   @override
-  String get markDelivered => 'وەک گەیاندراو مەزرە';
+  String get markDelivered => 'دڵنیاکردنەوەی گەیاندن';
 
   @override
   String get liveTracking => 'بەدواداچوونی ڕاستەوخۆ';
 
   @override
-  String get route => 'ڕێگا';
+  String get route => 'ڕێڕەو';
 
   @override
-  String get orderPlaced => 'بارەکە تۆمارکرا';
+  String get orderPlaced => 'داواکاری تۆمارکرا';
 
   @override
-  String get inTransit => 'لە ڕێگایە';
+  String get inTransit => 'لە ڕێگادایە';
 
   @override
-  String get delivered => 'گەیەندرا';
+  String get delivered => 'گەیەندراو';
 
   @override
   String get nowLabel => 'ئێستا';
@@ -194,16 +194,16 @@ class L10nKu extends L10n {
   String get about => 'دەربارە';
 
   @override
-  String get newShipment => 'بارێکی نوێ';
+  String get newShipment => 'باری نوێ';
 
   @override
-  String get createShipment => 'بار دروست بکە';
+  String get createShipment => 'دروستکردنی بار';
 
   @override
-  String get origin => 'بنەڕەت';
+  String get origin => 'شوێنی دەستپێک';
 
   @override
-  String get destination => 'ئامانج';
+  String get destination => 'شوێنی مەبەست';
 
   @override
   String get weight => 'کێش (کگ)';
@@ -212,43 +212,43 @@ class L10nKu extends L10n {
   String get category => 'پۆل';
 
   @override
-  String get vehicleType => 'جۆری ئامێر';
+  String get vehicleType => 'جۆری هۆکاری گواستنەوە';
 
   @override
   String get totalPrice => 'کۆی نرخ';
 
   @override
-  String get estimatedDelivery => 'دەستپێکردنی خەمڵاندن';
+  String get estimatedDelivery => 'گەیاندنی خەمڵێنراو';
 
   @override
   String get days => 'ڕۆژ';
 
   @override
-  String get shipmentDetails => 'زانیاری بار';
+  String get shipmentDetails => 'وردەکارییەکانی بار';
 
   @override
-  String get shipmentStatus => 'دۆخ';
+  String get shipmentStatus => 'دۆخی بار';
 
   @override
-  String get priceBreakdown => 'لیستی نرخ';
+  String get priceBreakdown => 'وردەکاریی نرخ';
 
   @override
-  String get trackShipment => 'تەرەکردنی بار';
+  String get trackShipment => 'بەدواداچوونی بار';
 
   @override
-  String get pending => 'چاوسێنراو';
+  String get pending => 'چاوەڕوان';
 
   @override
-  String get reported => 'راپۆرتکرا';
+  String get reported => 'ڕاپۆرتکراو';
 
   @override
   String get all => 'هەموو';
 
   @override
-  String get confirm => 'دڵنیابوونەوە';
+  String get confirm => 'دڵنیاکردنەوە';
 
   @override
-  String get cancel => 'هەڵوەشاندنەوە';
+  String get cancel => 'پاشگەزبوونەوە';
 
   @override
   String get save => 'پاشەکەوتکردن';
@@ -281,19 +281,19 @@ class L10nKu extends L10n {
   String get submit => 'ناردن';
 
   @override
-  String get markAsRead => 'وەک خوێندراوە مەزرە';
+  String get markAsRead => 'وەک خوێندراو دیاری بکە';
 
   @override
-  String get markAllRead => 'هەمووی وەک خوێندراو مەزرە';
+  String get markAllRead => 'هەموویان وەک خوێندراو دیاری بکە';
 
   @override
-  String get reportProblem => 'کێشەیەک راپۆرت بکە';
+  String get reportProblem => 'ڕاپۆرتکردنی کێشە';
 
   @override
-  String get submitReport => 'راپۆرت بنێرە';
+  String get submitReport => 'ڕاپۆرت بنێرە';
 
   @override
-  String get reportDetails => 'زانیاری راپۆرت';
+  String get reportDetails => 'وردەکارییەکانی ڕاپۆرت';
 
   @override
   String get yourComment => 'تێبینی تۆ';
@@ -302,19 +302,19 @@ class L10nKu extends L10n {
   String get staffResponse => 'وەڵامی کارمەند';
 
   @override
-  String get reportStatus => 'دۆخی راپۆرت';
+  String get reportStatus => 'دۆخی ڕاپۆرت';
 
   @override
   String get open => 'کراوە';
 
   @override
-  String get resolved => 'چارەسەرکرا';
+  String get resolved => 'چارەسەرکراو';
 
   @override
-  String get rejected => 'رەتکرایەوە';
+  String get rejected => 'ڕەتکراوە';
 
   @override
-  String get compensationIssued => 'کۆمپەنسەیشن دەرچووە';
+  String get compensationIssued => 'قەرەبوو دەرکرا';
 
   @override
   String get userManagement => 'بەڕێوەبردنی بەکارهێنەر';
@@ -332,13 +332,13 @@ class L10nKu extends L10n {
   String get customer => 'کڕیار';
 
   @override
-  String get driver => 'شوێنکەوتوو';
+  String get driver => 'شۆفێر';
 
   @override
   String get staff => 'کارمەند';
 
   @override
-  String get superAdmin => 'سووپەر ئەدمین';
+  String get superAdmin => 'بەڕێوەبەری گشتی';
 
   @override
   String get active => 'چالاک';
@@ -350,7 +350,7 @@ class L10nKu extends L10n {
   String get toggleStatus => 'گۆڕینی دۆخ';
 
   @override
-  String get categoryManagement => 'بەڕێوەبردنی پۆل';
+  String get categoryManagement => 'بەڕێوەبردنی پۆلەکان';
 
   @override
   String get addCategory => 'پۆل زیاد بکە';
@@ -365,7 +365,7 @@ class L10nKu extends L10n {
   String get nameKu => 'ناو (کوردی)';
 
   @override
-  String get surcharge => 'سەرەتای نرخ';
+  String get surcharge => 'زیادەی نرخ';
 
   @override
   String get multiplier => 'لێکدەر';
@@ -374,16 +374,16 @@ class L10nKu extends L10n {
   String get deliveryDaysOffset => 'جیاوازی ڕۆژی گەیاندن';
 
   @override
-  String get vehicleManagement => 'بەڕێوەبردنی ئامێر';
+  String get vehicleManagement => 'بەڕێوەبردنی هۆکارەکانی گواستنەوە';
 
   @override
-  String get addVehicle => 'ئامێر زیاد بکە';
+  String get addVehicle => 'زیادکردنی هۆکاری گواستنەوە';
 
   @override
-  String get editVehicle => 'دەستکاری ئامێر';
+  String get editVehicle => 'دەستکاری هۆکاری گواستنەوە';
 
   @override
-  String get pricingConfiguration => 'ڕێکخستنی نرخ';
+  String get pricingConfiguration => 'ڕێکخستنی نرخدانان';
 
   @override
   String get basePrice => 'نرخی بنەڕەت';
@@ -392,13 +392,13 @@ class L10nKu extends L10n {
   String get weightRate => 'نرخی کێش';
 
   @override
-  String get updatePricing => 'نرخ نوێکەرەوە';
+  String get updatePricing => 'نوێکردنەوەی نرخدانان';
 
   @override
   String get previewPrice => 'پێشبینی نرخ';
 
   @override
-  String get calculatePrice => ' حسابات نرخ';
+  String get calculatePrice => 'ژماردنی نرخ';
 
   @override
   String get faqManagement => 'بەڕێوەبردنی پرسیارە باوەکان';
@@ -416,7 +416,7 @@ class L10nKu extends L10n {
   String get answer => 'وەڵام';
 
   @override
-  String get sortOrder => 'ڕیزکردن';
+  String get sortOrder => 'ڕیزبەندی';
 
   @override
   String get account => 'هەژمار';
@@ -446,10 +446,10 @@ class L10nKu extends L10n {
   String get changePassword => 'وشەی نهێنی بگۆڕە';
 
   @override
-  String get notificationSettings => 'ڕێکخستنەکانی ئاگانامە';
+  String get notificationSettings => 'ڕێکخستنەکانی ئاگادارکردنەوە';
 
   @override
-  String get pushNotifications => 'ئاگانامەی پووش';
+  String get pushNotifications => 'ئاگادارکردنەوەی پۆش';
 
   @override
   String get loading => 'بارکردن...';
@@ -513,16 +513,16 @@ class L10nKu extends L10n {
   String get total => 'کۆی';
 
   @override
-  String get pendingCount => 'چاوسێنراو';
+  String get pendingCount => 'چاوەڕوان';
 
   @override
-  String get inTransitCount => 'لەڕێگەدا';
+  String get inTransitCount => 'لە ڕێگادایە';
 
   @override
-  String get deliveredCount => 'گەیەندرا';
+  String get deliveredCount => 'گەیەندراو';
 
   @override
-  String get reportedCount => 'راپۆرتکرا';
+  String get reportedCount => 'ڕاپۆرتکراو';
 
   @override
   String get newShipmentBtn => '+ بارێکی نوێ';
@@ -531,22 +531,22 @@ class L10nKu extends L10n {
   String get noShipmentsYet => 'هیچ بارێک نییە';
 
   @override
-  String get createFirstShipment => 'یەکەمین بارت لە لای سەرەوە دروست بکە';
+  String get createFirstShipment => 'یەکەم بارەکەت لە سەرەوە دروست بکە';
 
   @override
-  String get recentShipments => 'بارە نوێیەکان';
+  String get recentShipments => 'بارە دواییەکان';
 
   @override
-  String get helpAndFaq => 'یارمەتی و پرسیارە دووبارەکان';
+  String get helpAndFaq => 'یارمەتی و پرسیارە باوەکان';
 
   @override
-  String get findAnswers => 'وەڵامی پرسیارە باوەکان بدۆزەرەوە';
+  String get findAnswers => 'وەڵامی پرسیارە باوەکان بدۆزەوە';
 
   @override
-  String get preferences => 'ئامادەکاری';
+  String get preferences => 'هەڵبژاردنەکان';
 
   @override
-  String get signOut => 'دەرچوون';
+  String get signOut => 'چوونەدەرەوە';
 
   @override
   String get darkModeToggle => 'دۆخی تاریک';
@@ -555,31 +555,31 @@ class L10nKu extends L10n {
   String get switchToDark => 'گۆڕین بۆ دۆخی تاریک';
 
   @override
-  String get receiveAlerts => 'ئاگانامە وەربگرە بۆ بارەکانت';
+  String get receiveAlerts => 'ئاگادارکردنەوەی بارەکانت وەربگرە';
 
   @override
-  String get helpFaqLink => 'یارمەتی و پرسیارە دووبارەکان';
+  String get helpFaqLink => 'یارمەتی و پرسیارە باوەکان';
 
   @override
-  String get contactSupport => 'پەیوەندی بکە بۆ پشتگیری';
+  String get contactSupport => 'پەیوەندی بە پشتگیری بکە';
 
   @override
-  String get updatesFromShipments => 'نوێکارییەکان لە بارەکانتەوە';
+  String get updatesFromShipments => 'نوێکارییەکانی بارەکانت';
 
   @override
-  String get noNotificationsYet => 'هیچ ئاگانامەیەک نییە';
+  String get noNotificationsYet => 'هیچ ئاگادارکردنەوەیەک نییە';
 
   @override
-  String get allCaughtUp => 'هەمووت خوێندەوە!';
+  String get allCaughtUp => 'هەموویان خوێندراون!';
 
   @override
   String get shipmentUpdate => 'نوێکاری بار';
 
   @override
-  String get reportUpdate => 'نوێکاری راپۆرت';
+  String get reportUpdate => 'نوێکاری ڕاپۆرت';
 
   @override
-  String get newAssignment => 'ئەسپارتنی نوێ';
+  String get newAssignment => 'ئەسپاردەی نوێ';
 
   @override
   String get imageUnavailable => 'وێنەکە بەردەست نییە';
@@ -591,19 +591,22 @@ class L10nKu extends L10n {
   String get reportIssue => 'ڕاپۆرتکردنی کێشە';
 
   @override
-  String get confirmDelivery => 'کۆتاییهێنان بە گەیاندن';
+  String get confirmDelivery => 'دڵنیاکردنەوەی گەیاندن';
+
+  @override
+  String get confirmDeliveryQuestion => 'ئایا بارەکەت بە سەرکەوتوویی گەیشتووە؟';
 
   @override
   String get deliveredSuccessfully => 'بارەکە بە سەرکەوتوویی گەیەندرا';
 
   @override
-  String get myAssignments => 'ئەسپارتنەکانم';
+  String get myAssignments => 'ئەسپاردەکانم';
 
   @override
-  String get noAssignments => 'هیچ ئەسپارتنێک نییە';
+  String get noAssignments => 'هیچ ئەسپاردەیەک نییە';
 
   @override
-  String get noDeliveriesYet => 'هیچ گەیاندنێکت بۆ نەسپێردراوە';
+  String get noDeliveriesYet => 'هێشتا هیچ گەیاندنێکت پێ نەسپێردراوە';
 
   @override
   String get overview => 'تێڕوانین';
@@ -624,7 +627,7 @@ class L10nKu extends L10n {
   String get incorrectCredentials => 'ئیمەیڵ یان وشەی نهێنی هەڵەیە';
 
   @override
-  String get assigned => 'ئەسپاردراو';
+  String get assigned => 'سپێردراو';
 
   @override
   String get history => 'مێژوو';
@@ -636,7 +639,7 @@ class L10nKu extends L10n {
   String get orders => 'داواکارییەکان';
 
   @override
-  String get transit => 'لەڕێگەدا';
+  String get transit => 'لە ڕێگا';
 
   @override
   String get tryDifferentFilter => 'فلتەرێکی تر هەڵبژێرە';
@@ -654,22 +657,22 @@ class L10nKu extends L10n {
   String get noShipmentsFilter => 'هیچ بارێک نییە';
 
   @override
-  String get catalogLabel => 'کەتەلۆگ';
+  String get catalogLabel => 'کاتەلۆگ';
 
   @override
   String get usersLabel => 'بەکارهێنەران';
 
   @override
-  String get vehiclesLabel => 'ئامێرەکان';
+  String get vehiclesLabel => 'هۆکارەکان';
 
   @override
-  String get faqLabel => 'پرسیارە دووبارەکان';
+  String get faqLabel => 'پرسیارە باوەکان';
 
   @override
   String get pricingLabel => 'نرخ';
 
   @override
-  String get reportsLabel => 'راپۆرتەکان';
+  String get reportsLabel => 'ڕاپۆرتەکان';
 
   @override
   String get welcomeBackTitle => 'بەخێرهاتیتەوە\nدووبارە.';
@@ -687,10 +690,10 @@ class L10nKu extends L10n {
   String get actionLabel => 'کار';
 
   @override
-  String get assignBtn => 'ئەسپاردن';
+  String get assignBtn => 'سپاردن';
 
   @override
-  String get assignDriverTitle => 'ئەسپاردنی شۆفێر';
+  String get assignDriverTitle => 'سپاردنی شۆفێر';
 
   @override
   String get driverUserIdHint => 'ناسنامەی شۆفێر';
@@ -702,16 +705,16 @@ class L10nKu extends L10n {
   String get shipmentList => 'لیستی بارەکان';
 
   @override
-  String get incidentReports => 'راپۆرتی رووداوەکان';
+  String get incidentReports => 'ڕاپۆرتی ڕووداوەکان';
 
   @override
-  String get systemSettings => 'رێکخستنی سیستەم';
+  String get systemSettings => 'ڕێکخستنی سیستەم';
 
   @override
   String get ltmsStaff => 'کارمەندی LTMS';
 
   @override
-  String get reportQueue => 'ڕیزبەندی ڕاپۆرتەکان';
+  String get reportQueue => 'ڕیزی ڕاپۆرتەکان';
 
   @override
   String get reportQueueSubtitle =>
@@ -721,7 +724,7 @@ class L10nKu extends L10n {
   String get noReports => 'هیچ ڕاپۆرتێک نییە';
 
   @override
-  String get staffResponseLabel => 'وەڵامی ستاف:';
+  String get staffResponseLabel => 'وەڵامی کارمەند';
 
   @override
   String get resolveBtn => '✓ چارەسەرکردن';
@@ -788,7 +791,7 @@ class L10nKu extends L10n {
   String get cameraOrGallery => 'کامێرا یان گالەری';
 
   @override
-  String get updatePasswordSubtitle => 'نوێکردنەوەی تێپەڕەوشەی چوونەژوورەوە';
+  String get updatePasswordSubtitle => 'نوێکردنەوەی وشەی نهێنی چوونەژوورەوە';
 
   @override
   String get supportHours => 'بەردەستە (٩ی بەیانی - ٥ی ئێوارە)';
@@ -800,7 +803,7 @@ class L10nKu extends L10n {
   String get notificationsSection => 'ئاگادارکردنەوەکان';
 
   @override
-  String get appearanceSection => 'شێوە';
+  String get appearanceSection => 'ڕووکار';
 
   @override
   String get supportSection => 'پشتگیری';
@@ -812,10 +815,10 @@ class L10nKu extends L10n {
   String get editProfileSubtitle => 'ناو و زانیارییەکانت نوێ بکەوە';
 
   @override
-  String get pushNotificationsSubtitle => 'راپۆرت و ئەسپاردە نوێیەکان';
+  String get pushNotificationsSubtitle => 'ڕاپۆرت و ئەسپاردە نوێیەکان';
 
   @override
-  String get emailAlerts => 'ئاگادارکردنەوەی ئیمێڵ';
+  String get emailAlerts => 'ئاگادارکردنەوەی ئیمەیڵ';
 
   @override
   String get emailAlertsSubtitle => 'کورتەی ئیمێڵی رۆژانە';
@@ -827,7 +830,7 @@ class L10nKu extends L10n {
   String get doNotDisturbSubtitle => 'بێدەنگکردنی ئاگادارکردنەوەکان';
 
   @override
-  String get darkModeSubtitle => 'گۆڕین بۆ تیمی تاریک';
+  String get darkModeSubtitle => 'گۆڕین بۆ دۆخی تاریک';
 
   @override
   String get compactView => 'نیشاندانی چڕ';
@@ -854,13 +857,13 @@ class L10nKu extends L10n {
   String get closeBtn => 'داخستن';
 
   @override
-  String get buildLabel => 'بینیات: 2026.03';
+  String get buildLabel => 'بنیاتنان: 2026.03';
 
   @override
   String get productLabel => 'بەرهەم';
 
   @override
-  String get logisticsSystemName => 'سیستەمی بەڕێوەبردنی\nگواستنەوە و لۆجیستی';
+  String get logisticsSystemName => 'سیستەمی بەڕێوەبردنی\nگواستنەوە و لۆجستیک';
 
   @override
   String get id => 'ناسنامە';
@@ -885,28 +888,28 @@ class L10nKu extends L10n {
   String get generateNewKey => 'دروستکردنی کلیلی نوێ';
 
   @override
-  String get adminRole => 'ئەدمین';
+  String get adminRole => 'بەڕێوەبەر';
 
   @override
-  String get splashTagline => 'هەر شتێک بنێرە، بۆ هەر کوێێک.';
+  String get splashTagline => 'هەر شتێک بنێرە، بۆ هەر شوێنێک.';
 
   @override
-  String get splashSubtitle => 'ڕێگای زیرەکتر بۆ بەڕێوەبردنی لۆجیستیکەکەت';
+  String get splashSubtitle => 'ڕێگای زیرەکتر بۆ بەڕێوەبردنی لۆجستیکەکەت';
 
   @override
   String get getStarted => 'دەستپێبکە ←';
 
   @override
-  String get signInToAccount => 'داخلبوون بۆ ئەکاونتم';
+  String get signInToAccount => 'چوونەژوورەوە بۆ هەژمارەکەم';
 
   @override
-  String get chooseTransport => 'ڕێگای گواستنەوە هەڵبژێرە';
+  String get chooseTransport => 'هۆکاری گواستنەوە هەڵبژێرە';
 
   @override
-  String get groundTransport => 'گواستنەوەی بەری';
+  String get groundTransport => 'گواستنەوەی وشکانی';
 
   @override
-  String get airTransport => 'گواستنەوەی ئەسمانی';
+  String get airTransport => 'گواستنەوەی ئاسمانی';
 
   @override
   String get seaTransport => 'گواستنەوەی دەریایی';
@@ -922,10 +925,10 @@ class L10nKu extends L10n {
 
   @override
   String get enterOriginDestination =>
-      'شوێنی ئەرەکە و دەستینەی بارەکەت بنووسە.';
+      'شوێنی دەستپێک و مەبەستی بارەکەت بنووسە.';
 
   @override
-  String get whatAreSending => 'چی دەنێرێت؟';
+  String get whatAreSending => 'چی دەنێریت؟';
 
   @override
   String get weightKg => 'کێش (کیلۆگرام)';
@@ -934,60 +937,60 @@ class L10nKu extends L10n {
   String get dimensionsCm => 'ئەندازەکان (سانتیمەتر)';
 
   @override
-  String get estimatedTotal => 'کۆی خەمڵێندراو';
+  String get estimatedTotal => 'کۆی خەمڵێنراو';
 
   @override
   String estimatedDeliveryDays(int days) {
-    return 'خەمڵێندراوی گەیاندن: $days رۆژ';
+    return 'گەیاندنی خەمڵێنراو: $days ڕۆژ';
   }
 
   @override
-  String get shipmentSummary => 'پوختەی بارەکە';
+  String get shipmentSummary => 'پوختەی بار';
 
   @override
-  String get confirmShipment => 'پشتڕاستکردنەوەی بارەکە';
+  String get confirmShipment => 'دڵنیاکردنەوەی بار';
 
   @override
-  String get shipmentCreated => 'بارەکە دروستکرا! 🎉';
+  String get shipmentCreated => 'بارەکە بە سەرکەوتوویی دروستکرا!';
 
   @override
-  String get vehicleStep => 'ئامێر';
+  String get vehicleStep => 'هۆکاری گواستنەوە';
 
   @override
-  String get routeStep => 'ڕێگا';
+  String get routeStep => 'ڕێڕەو';
 
   @override
   String get detailsStep => 'وردەکاری';
 
   @override
-  String get reviewStep => 'پێداچونەوە';
+  String get reviewStep => 'پێداچوونەوە';
 
   @override
   String get categoryGeneral => 'گشتی';
 
   @override
-  String get categoryFragile => 'شکّاو';
+  String get categoryFragile => 'ناسک';
 
   @override
-  String get categoryElectronics => 'ئەلیکترۆنیات';
+  String get categoryElectronics => 'ئەلیکترۆنی';
 
   @override
-  String get transportTruck => 'تریلە';
+  String get transportTruck => 'بارەهەڵگر';
 
   @override
-  String get transportTruckMeta => '+٢ رۆژ · ظەرفیەتی بەرز';
+  String get transportTruckMeta => '+٢ ڕۆژ · توانای بارکردنی بەرز';
 
   @override
-  String get transportAirplane => 'ئاسمانپەیما';
+  String get transportAirplane => 'فڕۆکە';
 
   @override
-  String get transportAirplaneMeta => '-٢ رۆژ · پڕ خێرا';
+  String get transportAirplaneMeta => '-٢ ڕۆژ · گەیاندنی خێرا';
 
   @override
   String get transportShip => 'کەشتی';
 
   @override
-  String get transportShipMeta => '+١٠ رۆژ · باری دەریا';
+  String get transportShipMeta => '+١٠ ڕۆژ · باری دەریایی';
 
   @override
   String get weightRow => 'کێش';
@@ -996,20 +999,20 @@ class L10nKu extends L10n {
   String get dimensionsRow => 'ئەندازەکان';
 
   @override
-  String get transportRow => 'ئامێری گواستنەوە';
+  String get transportRow => 'هۆکاری گواستنەوە';
 
   @override
   String get validWeightError => 'تکایە کێشێکی دروست بنووسە.';
 
   @override
   String get validDimensionsError =>
-      'تکایە ژمارەی دروست بۆ دراز، پان و بەرزی بنووسە.';
+      'تکایە ژمارەی دروست بۆ درێژی، پانی و بەرزی بنووسە.';
 
   @override
-  String get signInToDeliveries => 'داخلبوون بۆ بەڕێوەبردنی گەیاندنەکانت';
+  String get signInToDeliveries => 'چوونەژوورەوە بۆ بەڕێوەبردنی گەیاندنەکانت';
 
   @override
-  String get loginFailed => 'داخلبوون سەرکەوتوو نەبوو';
+  String get loginFailed => 'چوونەژوورەوە سەرکەوتوو نەبوو';
 
   @override
   String get enterEmail => 'تکایە ئیمەیلت بنووسە';
@@ -1031,17 +1034,17 @@ class L10nKu extends L10n {
       'تۆمارکردن سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە.';
 
   @override
-  String get alreadyMember => 'ئەزموونی هەیتە؟ ';
+  String get alreadyMember => 'پێشتر هەژمارت هەیە؟ ';
 
   @override
   String get termsAgree =>
-      'بە دروستکردنی ئەکاونت ڕازیت بە مەرجەکانی خزمەتگوزاری و سیاسەتی نهێنیمانە.';
+      'بە دروستکردنی هەژمار، ڕازیت بە مەرجەکانی خزمەتگوزاری و سیاسەتی نهێنیمان.';
 
   @override
   String get fullNameLabel => 'ناوی تەواو';
 
   @override
-  String get emailAddressLabel => 'ئینەوانی ئیمەیل';
+  String get emailAddressLabel => 'ناونیشانی ئیمەیڵ';
 
   @override
   String get confirmPasswordLabel => 'دووبارەکردنەوەی وشەی نهێنی';
@@ -1053,20 +1056,20 @@ class L10nKu extends L10n {
   String get repeatPasswordHint => 'وشەی نهێنی دووبارە بنووسە';
 
   @override
-  String get createAccountTitle => 'دروستکردنی\nئەکاونتت.';
+  String get createAccountTitle => 'دروستکردنی\nهەژمارەکەت.';
 
   @override
   String get createAccountSubtitle =>
-      'زیرەکتر بنێرە — یەکەمین ئۆردەرت لە چەند خولەکدا شوێننیشان بکە';
+      'زیرەکتر بار بنێرە — یەکەم داواکارییەکەت لە چەند خولەکدا بەدوادا بکە';
 
   @override
-  String get signInToStaffPortal => 'داخلبوون بۆ دەرگای ستاف';
+  String get signInToStaffPortal => 'چوونەژوورەوە بۆ پۆرتاڵی کارمەند';
 
   @override
   String get signOutDashboard => 'داشبۆرد';
 
   @override
-  String get reportSubmitted => 'رپۆرتەکە نارا ✓';
+  String get reportSubmitted => 'ڕاپۆرتەکە نێردرا ✓';
 
   @override
   String get shipmentLabel => 'بارەکە';
@@ -1076,19 +1079,20 @@ class L10nKu extends L10n {
 
   @override
   String get teamWillReview =>
-      'تیمەکەمان رپۆرتەکەت پێداچونەوە دەکاتەوە و لە ٢٤–٤٨ کاتژمێردا وەڵامت دەداتەوە.';
+      'تیمەکەمان ڕاپۆرتەکەت پێداچوونەوە دەکات و لە ماوەی ٢٤–٤٨ کاتژمێردا وەڵامت دەداتەوە.';
 
   @override
-  String get reportAnIssue => 'رپۆرتکردنی کێشە';
+  String get reportAnIssue => 'ڕاپۆرتکردنی کێشە';
 
   @override
-  String get problemHint => 'بۆ نموونە: گورجەکە زیانی پێگەیشت — شووشەکە شکا…';
+  String get problemHint =>
+      'بۆ نموونە: پاکێجەکە زیانی پێگەیشتووە — شاشەکە شکاوە…';
 
   @override
-  String get originCity => '📍 شارەوانی سەرچاوە';
+  String get originCity => '📍 شاری دەستپێک';
 
   @override
-  String get destinationCity => '🏁 شارەوانی دەستینە';
+  String get destinationCity => '🏁 شاری مەبەست';
 
   @override
   String get originHint => 'بۆ نموونە: هەولێر';
@@ -1108,16 +1112,16 @@ class L10nKu extends L10n {
   String get accountSubtitle => 'زانیاری پرۆفایلەکەت نوێ بکەوە';
 
   @override
-  String get appearanceSettings => 'ڕووی دیمەن';
+  String get appearanceSettings => 'ڕووکار';
 
   @override
-  String get appearanceSubtitle => 'دۆخی تاریک و ڕێکخستنەکانی تەمەن';
+  String get appearanceSubtitle => 'دۆخی تاریک و ڕێکخستنەکانی ڕووکار';
 
   @override
-  String get notificationsSettings => 'ئاگانامەکان';
+  String get notificationsSettings => 'ئاگادارکردنەوەکان';
 
   @override
-  String get notificationsSubtitle => 'ڕێکخستنەکانی ئاگانامەی پووش';
+  String get notificationsSubtitle => 'ڕێکخستنەکانی ئاگادارکردنەوەی پۆش';
 
   @override
   String get securitySettings => 'ئاسایش';
@@ -1129,16 +1133,16 @@ class L10nKu extends L10n {
   String get helpSupportSettings => 'یارمەتی و پشتگیری';
 
   @override
-  String get helpSupportSubtitle => 'پرسیارە دووبارەکان و پەیوەندی';
+  String get helpSupportSubtitle => 'پرسیارە باوەکان و پەیوەندی بە پشتگیری';
 
   @override
   String get aboutSettings => 'دەربارە';
 
   @override
-  String get aboutSubtitle => 'ڤێرژنی ئاپەکە 1.0.0';
+  String get aboutSubtitle => 'ڤێرژنی ئەپەکە 1.0.0';
 
   @override
-  String get signOutSettings => 'دەرچوون';
+  String get signOutSettings => 'چوونەدەرەوە';
 
   @override
   String get noShipmentsFound => 'هیچ بارێک نەدۆزرایەوە';
@@ -1176,19 +1180,20 @@ class L10nKu extends L10n {
   String get copyPassword => 'کۆپیکردنی وشەی نهێنی';
 
   @override
-  String get assignDriver => 'شوێنکەوتوو ئەسپاردن';
+  String get assignDriver => 'سپاردنی شۆفێر';
 
   @override
-  String get pricingFormula => 'کۆی = (بن + کێش × نرخ + خەرێک) × لێکدەری ئامێر';
+  String get pricingFormula =>
+      'کۆی گشتی = (نرخی بنەڕەت + کێش × نرخ + زیادەی نرخ) × جارکەری هۆکاری گواستنەوە';
 
   @override
-  String get reportOverview => 'سەرنجی راپۆرت';
+  String get reportOverview => 'کورتەی ڕاپۆرتەکان';
 
   @override
   String get catalogManagement => 'بەڕێوەبردنی کاتالۆگ';
 
   @override
-  String get categoryCrudPlaceholder => 'ڕێکخستنی پۆل';
+  String get categoryCrudPlaceholder => 'ناوەڕۆکی بەڕێوەبردنی پۆلەکان';
 
   @override
   String kgUnit(String value) {
@@ -1207,7 +1212,7 @@ class L10nKu extends L10n {
   String get backButton => 'گەڕانەوە';
 
   @override
-  String get confirmShipmentButton => 'دڵنیابوونەوەی بار';
+  String get confirmShipmentButton => 'دڵنیاکردنەوەی بار';
 
   @override
   String get shipmentCreatedSuccess => 'بارەکە بە سەرکەوتوویی دروستکرا!';
@@ -1221,7 +1226,7 @@ class L10nKu extends L10n {
   String get newShipmentButton => '+ بارێکی نوێ';
 
   @override
-  String get helpFaq => 'یارمەتی و پرسیارە دووبارەکان';
+  String get helpFaq => 'یارمەتی و پرسیارە باوەکان';
 
   @override
   String get searchQuestions => 'گەڕان لە پرسیارەکان…';
@@ -1258,7 +1263,7 @@ class L10nKu extends L10n {
   String get ltmsCustomer => 'کڕیاری LTMS';
 
   @override
-  String get ltmsDriver => 'شوێنکەوتووی LTMS';
+  String get ltmsDriver => 'شۆفێری LTMS';
 
   @override
   String get emailPlaceholder => 'email@example.com';
@@ -1279,13 +1284,13 @@ class L10nKu extends L10n {
   String get noCustomersFound => 'هیچ کڕیارێک نەدۆزرایەوە';
 
   @override
-  String get notificationSentSuccess => 'ئاگانامە بە سەرکەوتوویی نرا!';
+  String get notificationSentSuccess => 'ئاگادارکردنەوە بە سەرکەوتوویی نێردرا';
 
   @override
-  String get notificationHint => 'بۆ نموونە: ئامادەکاری هەولێر، دەرگا ٣';
+  String get notificationHint => 'بۆ نموونە: کۆگای هەولێر، دەرگای ٣';
 
   @override
-  String get sendNotification => 'ناردنی ئاگانامە';
+  String get sendNotification => 'ناردنی ئاگادارکردنەوە';
 
   @override
   String get staffSidebar => 'کارمەندی LTMS';
@@ -1312,7 +1317,7 @@ class L10nKu extends L10n {
   String get passwordUpdateHint => 'وشەی نهێنیت نوێ بکەوە';
 
   @override
-  String get alertsSubtitle => 'ئاگادارکردنەوە بۆ ئەسپارتنی نوێ وەربگرە';
+  String get alertsSubtitle => 'ئاگادارکردنەوە بۆ ئەسپاردە نوێیەکان وەربگرە';
 
   @override
   String get accountSubtitleUpdate => 'ناو و زانیارییەکانت نوێ بکەوە';
@@ -1321,19 +1326,19 @@ class L10nKu extends L10n {
   String get passwordSubtitleUpdate => 'وشەی نهێنیت نوێ بکەوە';
 
   @override
-  String get faqSubtitle => 'پرسیارە دووبارەکان و پەیوەندی';
+  String get faqSubtitle => 'پرسیارە باوەکان و پەیوەندی';
 
   @override
   String get feedbackSubtitle => 'پێداچونەوەکانت بنێرە';
 
   @override
-  String get versionInfo => 'ڤێرژن 1.0.0 · LTMS شوێنکەوتوو';
+  String get versionInfo => 'ڤێرژن 1.0.0 · شۆفێری LTMS';
 
   @override
   String get versionLabel => 'ڤێرژن: 1.0.0';
 
   @override
-  String get logisticsSystemFull => 'سیستەمی بەڕێوەبردنی گواستنەوە و لۆجیستیک';
+  String get logisticsSystemFull => 'سیستەمی بەڕێوەبردنی گواستنەوە و لۆجستیک';
 
   @override
   String shipmentIdPrefix(String id) {
@@ -1351,16 +1356,16 @@ class L10nKu extends L10n {
   }
 
   @override
-  String get acceptStartTransit => 'قبووڵکردن و دەستپێکردنی گواستنەوە';
+  String get acceptStartTransit => 'وەرگرتن و دەستپێکردنی گواستنەوە';
 
   @override
-  String get markAsDelivered => 'وەک گەیاندراو مەزرە';
+  String get markAsDelivered => 'وەک گەیەندراو دیاری بکە';
 
   @override
-  String get noNotificationsFound => 'هیچ ئاگانامەیەک نەدۆزرایەوە';
+  String get noNotificationsFound => 'هیچ ئاگادارکردنەوەیەک نەدۆزرایەوە';
 
   @override
-  String get noNotifications => 'هیچ ئاگانامەیەک نییە';
+  String get noNotifications => 'هیچ ئاگادارکردنەوەیەک نییە';
 
   @override
   String get ltmsTitle => 'LTMS';
@@ -1369,8 +1374,7 @@ class L10nKu extends L10n {
   String get stillNeedHelp => 'هێشتا پێویستت بە یارمەتییە؟';
 
   @override
-  String get contactSupportLine =>
-      'ڕاستەوخۆ پەیوەندی بە تیمی پاڵپشتی ئێمەوە بکە';
+  String get contactSupportLine => 'ڕاستەوخۆ پەیوەندی بە تیمی پشتگیریمان بکە';
 
   @override
   String get settings => 'ڕێکخستنەکان';
@@ -1421,9 +1425,9 @@ class L10nKu extends L10n {
   String get faqCrudPlaceholder => 'ناوەڕۆکی بەڕێوەبردنی پرسیارە باوەکان';
 
   @override
-  String get languageSubtitle => 'گۆڕینی زمانی ئەپڵیکەیشن';
+  String get languageSubtitle => 'گۆڕینی زمانی ئەپ';
 
   @override
   String get accountDisabled =>
-      'هەژمارەکەت ناچالاک کراوە. تکایە پەیوەندی بکە بە پشتگیری.';
+      'هەژمارەکەت ناچالاککراوە. تکایە پەیوەندی بە پشتگیری بکە.';
 }

@@ -33,6 +33,10 @@ class LTMSDriverApp extends ConsumerWidget {
       theme: AppTheme.light,
       routerConfig: router,
       locale: locale,
+      builder: (context, child) => Directionality(
+        textDirection: textDirectionForLocale(locale),
+        child: child ?? const SizedBox.shrink(),
+      ),
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: [
         L10n.delegate,

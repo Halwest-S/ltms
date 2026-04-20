@@ -33,7 +33,7 @@ class KurdishMaterialLocalizations extends GlobalMaterialLocalizations {
   String get okButtonLabel => 'باشە';
 
   @override
-  String get cancelButtonLabel => 'پاشەکشە';
+  String get cancelButtonLabel => 'پاشگەزبوونەوە';
 
   @override
   String get closeButtonLabel => 'داخستن';
@@ -45,7 +45,7 @@ class KurdishMaterialLocalizations extends GlobalMaterialLocalizations {
   String get backButtonTooltip => 'گەڕانەوە';
 
   @override
-  String get continueButtonLabel => 'بەردەوام بە';
+  String get continueButtonLabel => 'بەردەوامبوون';
 
   @override
   String get copyButtonLabel => 'کۆپی';
@@ -54,7 +54,7 @@ class KurdishMaterialLocalizations extends GlobalMaterialLocalizations {
   String get cutButtonLabel => 'بڕین';
 
   @override
-  String get pasteButtonLabel => 'پێوەنوسان';
+  String get pasteButtonLabel => 'لکاندن';
 
   @override
   String get selectAllButtonLabel => 'هەمووی هەڵبژێرە';
@@ -155,10 +155,10 @@ class KurdishMaterialLocalizations extends GlobalMaterialLocalizations {
   String get calendarModeButtonLabel => 'گۆڕین بۆ ڕۆژژمێر';
 
   @override
-  String get dateHelpText => 'سـاپ/مـم/ڕۆژ';
+  String get dateHelpText => 'ساڵ/مانگ/ڕۆژ';
 
   @override
-  String get dateInputLabel => 'بەروار داخڵ بکە';
+  String get dateInputLabel => 'بەروار بنووسە';
 
   @override
   String get dateOutOfRangeLabel => 'بەروارەکە لە دەرەوەی مەودایە.';
@@ -593,7 +593,7 @@ class KurdishCupertinoLocalizations extends GlobalCupertinoLocalizations {
   String get cutButtonLabel => 'بڕین';
 
   @override
-  String get pasteButtonLabel => 'پێوەنوسان';
+  String get pasteButtonLabel => 'لکاندن';
 
   @override
   String get selectAllButtonLabel => 'هەمووی هەڵبژێرە';
@@ -664,7 +664,7 @@ class KurdishCupertinoLocalizations extends GlobalCupertinoLocalizations {
   String get backButtonLabel => 'گەڕانەوە';
 
   @override
-  String get cancelButtonLabel => 'هەڵوەشاندنەوە';
+  String get cancelButtonLabel => 'پاشگەزبوونەوە';
 
   @override
   String get clearButtonLabel => 'پاککردنەوە';

@@ -13,6 +13,12 @@ final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {
   return LocaleNotifier(prefs);
 });
 
+bool isKurdishLocale(Locale locale) => locale.languageCode == 'ku';
+
+TextDirection textDirectionForLocale(Locale locale) {
+  return isKurdishLocale(locale) ? TextDirection.rtl : TextDirection.ltr;
+}
+
 class LocaleNotifier extends StateNotifier<Locale> {
   final SharedPreferences _prefs;
   static const _langKey = 'selected_language';
