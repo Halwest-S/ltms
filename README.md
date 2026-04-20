@@ -1,4 +1,8 @@
-# Stock Exchange Project
+# LTMS - Kurdistan Import Logistics Platform
+
+LTMS is a logistics platform for importing goods from international marketplaces into the Kurdistan Region of Iraq. It includes customer, driver, staff, and admin applications backed by a Laravel API.
+
+See [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) for the cleaned repository layout and source ownership guide.
 
 ## Coolify deployment
 

@@ -72,7 +72,14 @@ desktop.ini
 *.log
 *.tmp
 *.bak
+tmp_*.dart
+playwright-*.png
+analyze*.json
+analyze*.txt
 
 # Local installers/downloads
 .downloads/
 *.exe
+
+# Accidental nested repository copies
+project_hz/
