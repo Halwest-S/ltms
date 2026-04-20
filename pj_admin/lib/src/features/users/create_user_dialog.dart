@@ -23,7 +23,7 @@ class CreateUserDialog extends ConsumerStatefulWidget {
 }
 
 class _CreateUserDialogState extends ConsumerState<CreateUserDialog> {
-  static const List<String> _roles = ['staff', 'driver', 'admin'];
+  static const List<String> _roles = ['staff', 'driver'];
 
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
@@ -32,21 +32,12 @@ class _CreateUserDialogState extends ConsumerState<CreateUserDialog> {
   final _passwordCtrl = TextEditingController();
 
   String? _selectedRole;
-  String? _generatedKey;
   bool _isLoading = false;
   bool _obscurePassword = true;
 
   void _generatePassword() {
     const uuid = Uuid();
     _passwordCtrl.text = uuid.v4().substring(0, 12);
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _generateKey() {
-    const uuid = Uuid();
-    _generatedKey = uuid.v4();
     if (mounted) {
       setState(() {});
     }
@@ -59,8 +50,6 @@ class _CreateUserDialogState extends ConsumerState<CreateUserDialog> {
   }) {
     return L10n.of(context)!.localeName == 'ku' ? ku : en;
   }
-
-  String _rolePayload(String role) => role == 'admin' ? 'super_admin' : role;
 
   String _extractErrorMessage(Object error) {
     if (error is DioException) {
@@ -106,20 +95,6 @@ class _CreateUserDialogState extends ConsumerState<CreateUserDialog> {
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     final l10n = L10n.of(context)!;
-    final selectedRole = _selectedRole!;
-
-    if (_selectedRole == 'admin' && _generatedKey == null) {
-      _generateKey();
-    }
-
-    final createdAdmin = selectedRole == 'admin' && _generatedKey != null;
-    final successMessage = createdAdmin
-        ? _screenText(
-            context,
-            ku: 'هەژمارەکە دروستکرا. کلیلی ئەدمین کۆپی کرا.',
-            en: 'User created. Admin key copied.',
-          )
-        : l10n.userCreated;
 
     try {
       await ref.read(apiClientProvider).createUserByAdmin({
@@ -128,18 +103,13 @@ class _CreateUserDialogState extends ConsumerState<CreateUserDialog> {
         if (_phoneCtrl.text.trim().isNotEmpty)
           'phone_number': _phoneCtrl.text.trim(),
         'password': _passwordCtrl.text,
-        'role': _rolePayload(selectedRole),
-        if (selectedRole == 'admin') 'admin_key': _generatedKey,
+        'role': _selectedRole,
       });
 
       if (!mounted) return;
-      if (createdAdmin) {
-        await Clipboard.setData(ClipboardData(text: _generatedKey!));
-        if (!mounted) return;
-      }
       messenger
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(successMessage)));
+        ..showSnackBar(SnackBar(content: Text(l10n.userCreated)));
       navigator.pop(true);
     } catch (error) {
       if (!mounted) return;
@@ -147,9 +117,7 @@ class _CreateUserDialogState extends ConsumerState<CreateUserDialog> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: Text(
-              '${l10n.error}: ${_extractErrorMessage(error)}',
-            ),
+            content: Text('${l10n.error}: ${_extractErrorMessage(error)}'),
           ),
         );
     } finally {
@@ -160,7 +128,6 @@ class _CreateUserDialogState extends ConsumerState<CreateUserDialog> {
   }
 
   String _roleLabel(L10n l10n, String role) => switch (role) {
-    'admin' => l10n.adminRole,
     'driver' => l10n.driver,
     'staff' => l10n.staff,
     _ => role,
@@ -232,7 +199,7 @@ class _CreateUserDialogState extends ConsumerState<CreateUserDialog> {
                   if (digits.length < 8 || digits.length > 15) {
                     return _screenText(
                       context,
-                      ku: 'ژمارەی تەلەفۆن دروست بنووسە',
+                      ku: 'ژمارەی تەلەفۆن بە دروستی بنووسە',
                       en: 'Enter a valid phone number',
                     );
                   }
@@ -303,85 +270,21 @@ class _CreateUserDialogState extends ConsumerState<CreateUserDialog> {
                       ),
                     )
                     .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedRole = value;
-                    _generatedKey = null;
-                    if (value == 'admin') {
-                      _generateKey();
-                    }
-                  });
-                },
+                onChanged: (value) => setState(() => _selectedRole = value),
                 validator: (value) => value == null ? l10n.required : null,
               ),
-              if (_selectedRole == 'admin') ...[
-                const SizedBox(height: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _screenText(
-                        context,
-                        ku: 'کلیلی ئەدمین (٣٦ پیت):',
-                        en: 'Admin Key (36 chars):',
-                      ),
-                      style: textTheme.labelLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.tealLight,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppTheme.border),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: SelectableText(
-                              _generatedKey ?? '',
-                              style: textTheme.bodyMedium?.copyWith(
-                                color: AppTheme.teal,
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: _generatedKey == null
-                                ? null
-                                : () => _copyText(
-                                    _generatedKey!,
-                                    _screenText(
-                                      context,
-                                      ku: 'کلیلی ئەدمین کۆپی کرا',
-                                      en: 'Admin key copied',
-                                    ),
-                                  ),
-                            tooltip: _screenText(
-                              context,
-                              ku: 'کۆپی',
-                              en: 'Copy',
-                            ),
-                            icon: const Icon(Icons.copy_rounded),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _screenText(
-                        context,
-                        ku: 'تکایە ئەم کلیـلە هەڵبگرە. بۆ چوونەژوورەوەی ئەدمین پێویستە.',
-                        en: 'Save this key. It is required for admin sign-in.',
-                      ),
-                      style: textTheme.bodySmall?.copyWith(color: AppTheme.muted),
-                    ),
-                  ],
+              const SizedBox(height: 10),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  _screenText(
+                    context,
+                    ku: 'تەنها سوپەر ئەدمین دەتوانێت هەژماری ستاف و شۆفێر دروست بکات.',
+                    en: 'Only the super admin can create staff and driver accounts.',
+                  ),
+                  style: textTheme.bodySmall?.copyWith(color: AppTheme.muted),
                 ),
-              ],
+              ),
             ],
           ),
         ),

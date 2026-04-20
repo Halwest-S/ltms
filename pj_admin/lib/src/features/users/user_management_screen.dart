@@ -7,6 +7,7 @@ import '../../core/admin_shell.dart';
 import '../../core/api_provider.dart';
 import '../../core/response_parsing.dart';
 import '../../core/theme.dart';
+import '../auth/auth_provider.dart';
 import 'create_user_dialog.dart';
 
 final usersProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
@@ -49,6 +50,34 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
     _ => role.toUpperCase(),
   };
 
+  String _extractErrorMessage(Object error) {
+    if (error is DioException) {
+      final data = error.response?.data;
+      if (data is Map) {
+        final map = Map<String, dynamic>.from(data);
+        final message = map['message'];
+        if (message is String && message.trim().isNotEmpty) {
+          return message;
+        }
+
+        final errors = map['errors'];
+        if (errors is Map) {
+          for (final value in errors.values) {
+            if (value is List && value.isNotEmpty) {
+              return value.first.toString();
+            }
+          }
+        }
+      }
+
+      if (error.message != null && error.message!.trim().isNotEmpty) {
+        return error.message!;
+      }
+    }
+
+    return error.toString();
+  }
+
   Future<void> _toggleUserStatus(Map<String, dynamic> user) async {
     final userId = _parseUserId(user['id']);
     if (userId == null || _pendingUserIds.contains(userId)) return;
@@ -74,9 +103,13 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
       setState(() {
         _optimisticActiveStates[userId] = previous;
       });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('${L10n.of(context)!.error}: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${L10n.of(context)!.error}: ${_extractErrorMessage(e)}',
+          ),
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -86,11 +119,68 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
     }
   }
 
+  Future<void> _deleteUser(Map<String, dynamic> user) async {
+    final userId = _parseUserId(user['id']);
+    if (userId == null || _pendingUserIds.contains(userId)) return;
+
+    final name = (user['name'] ?? '').toString();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        final l10n = L10n.of(context)!;
+        return AlertDialog(
+          title: Text(l10n.delete),
+          content: Text(
+            'Delete ${name.isEmpty ? 'this account' : name}? This cannot be undone.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.red),
+              child: Text(l10n.delete),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true) return;
+
+    setState(() => _pendingUserIds.add(userId));
+
+    try {
+      await ref.read(apiClientProvider).deleteAdminUser(userId);
+      ref.invalidate(usersProvider);
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Account deleted.')));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${L10n.of(context)!.error}: ${_extractErrorMessage(e)}',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _pendingUserIds.remove(userId));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
     final l10n = L10n.of(context)!;
     final usersAsync = ref.watch(usersProvider);
+    final currentUser = ref.watch(authProvider);
     final isCompact = MediaQuery.sizeOf(context).width < 960;
 
     return AdminShell(
@@ -145,6 +235,10 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                     final isPending =
                         userId != null && _pendingUserIds.contains(userId);
                     final role = (u['role'] ?? '').toString();
+                    final canModifyUser =
+                        userId != null &&
+                        userId != currentUser?.id &&
+                        role != 'super_admin';
                     final roleColor = switch (role) {
                       'super_admin' => AppTheme.rose,
                       'staff' => const Color(0xFF6366F1),
@@ -243,7 +337,8 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                                         children: [
                                           Switch(
                                             value: active,
-                                            onChanged: isPending
+                                            onChanged:
+                                                isPending || !canModifyUser
                                                 ? null
                                                 : (_) => _toggleUserStatus(u),
                                             activeThumbColor: Colors.white,
@@ -260,6 +355,16 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                                               ),
                                             ),
                                         ],
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: isPending || !canModifyUser
+                                          ? null
+                                          : () => _deleteUser(u),
+                                      tooltip: l10n.delete,
+                                      color: AppTheme.red,
+                                      icon: const Icon(
+                                        Icons.delete_outline_rounded,
                                       ),
                                     ),
                                   ],
@@ -327,7 +432,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                                     children: [
                                       Switch(
                                         value: active,
-                                        onChanged: isPending
+                                        onChanged: isPending || !canModifyUser
                                             ? null
                                             : (_) => _toggleUserStatus(u),
                                         activeThumbColor: Colors.white,
@@ -344,6 +449,17 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                                           ),
                                         ),
                                     ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  onPressed: isPending || !canModifyUser
+                                      ? null
+                                      : () => _deleteUser(u),
+                                  tooltip: l10n.delete,
+                                  color: AppTheme.red,
+                                  icon: const Icon(
+                                    Icons.delete_outline_rounded,
                                   ),
                                 ),
                               ],

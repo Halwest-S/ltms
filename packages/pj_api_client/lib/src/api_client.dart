@@ -181,6 +181,8 @@ class ApiClient {
   Future<Response> getAdminUsers() => _dio.get('/api/v1/admin/users');
   Future<Response> toggleUserStatus(int userId) =>
       _dio.patch('/api/v1/admin/users/$userId/toggle');
+  Future<Response> deleteAdminUser(int userId) =>
+      _dio.delete('/api/v1/admin/users/$userId');
   Future<Response> getAdminCategories() => _dio.get('/api/v1/admin/categories');
   Future<Response> createAdminCategory(Map<String, dynamic> data) =>
       _dio.post('/api/v1/admin/categories', data: data);

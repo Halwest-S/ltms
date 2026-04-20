@@ -18,16 +18,22 @@ class LTMSSeeder extends Seeder
 
     public function run(): void
     {
-        User::updateOrCreate([
-            'email' => env('SEED_SUPER_ADMIN_EMAIL', 'admin@ltms.app'),
-        ], [
+        $superAdminAttributes = [
             'name' => 'Super Admin',
+            'email' => env('SEED_SUPER_ADMIN_EMAIL', 'admin@ltms.app'),
             'phone_number' => env('SEED_SUPER_ADMIN_PHONE', '+9647500000001'),
             'password' => Hash::make(env('SEED_SUPER_ADMIN_PASSWORD', 'password')),
             'admin_key_hash' => Hash::make(env('SEED_SUPER_ADMIN_KEY', self::DEFAULT_SUPER_ADMIN_KEY)),
             'role' => 'super_admin',
             'is_active' => true,
-        ]);
+        ];
+
+        $superAdmin = User::where('role', 'super_admin')->first();
+        if ($superAdmin) {
+            $superAdmin->fill($superAdminAttributes)->save();
+        } else {
+            User::create($superAdminAttributes);
+        }
 
         User::updateOrCreate([
             'email' => env('SEED_STAFF_EMAIL', 'staff@ltms.app'),

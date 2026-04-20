@@ -51,6 +51,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/admin/users', [AdminController::class, 'users']);
             Route::post('/admin/users', [AdminController::class, 'storeUser']);
             Route::patch('/admin/users/{id}/toggle', [AdminController::class, 'toggleUserStatus']);
+            Route::delete('/admin/users/{id}', [AdminController::class, 'destroyUser']);
 
             Route::get('/admin/categories', [AdminController::class, 'categories']);
             Route::post('/admin/categories', [AdminController::class, 'storeCategory']);

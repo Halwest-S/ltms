@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Faq;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -31,8 +32,9 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'phone_number' => ['nullable', 'required_if:role,driver', 'string', 'min:8', 'max:16', 'regex:/^\+?[0-9]{8,15}$/', 'unique:users,phone_number'],
             'password' => 'required|string|min:6',
-            'role' => 'required|in:staff,driver,super_admin',
-            'admin_key' => 'nullable|uuid|required_if:role,super_admin',
+            'role' => ['required', Rule::in(['staff', 'driver'])],
+        ], [
+            'role.in' => 'Only staff and driver accounts can be created here. This system supports exactly one super admin account.',
         ]);
 
         $attributes = [
@@ -43,20 +45,52 @@ class AdminController extends Controller
             'role' => $request->role,
         ];
 
-        if ($request->role === 'super_admin') {
-            $attributes['admin_key_hash'] = Hash::make($request->admin_key);
-        }
-
         $user = User::create($attributes);
 
         return response()->json($user, 201);
     }
 
-    public function toggleUserStatus($id)
+    public function toggleUserStatus(Request $request, $id)
     {
         $user = User::findOrFail($id);
+
+        if ($user->id === $request->user()->id || $user->role === 'super_admin') {
+            return response()->json([
+                'message' => 'The super admin account cannot be disabled.',
+            ], 422);
+        }
+
         $user->update(['is_active' => !$user->is_active]);
         return response()->json($user);
+    }
+
+    public function destroyUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->id === $request->user()->id) {
+            return response()->json([
+                'message' => 'You cannot delete your own account.',
+            ], 422);
+        }
+
+        if ($user->role === 'super_admin') {
+            return response()->json([
+                'message' => 'The super admin account cannot be deleted.',
+            ], 422);
+        }
+
+        if ($user->shipments()->exists() || $user->assignedShipments()->exists()) {
+            return response()->json([
+                'message' => 'This account is linked to shipments and cannot be deleted.',
+            ], 422);
+        }
+
+        $user->tokens()->delete();
+        $user->notifications()->delete();
+        $user->delete();
+
+        return response()->noContent();
     }
 
     // Categories
