@@ -37,7 +37,7 @@ class ReportController extends Controller
 
         if ($shipment->delivery_confirmed_at !== null) {
             return response()->json([
-                'message' => 'This shipment has already been confirmed as delivered.',
+                'message' => 'This import has already been confirmed as delivered.',
             ], 422);
         }
 

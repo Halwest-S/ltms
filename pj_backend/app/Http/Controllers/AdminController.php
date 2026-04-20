@@ -113,6 +113,8 @@ class AdminController extends Controller
         $attributes = $request->validate([
             'name_en' => 'required|string',
             'name_ku' => 'required|string',
+            'transport_method' => 'nullable|in:ground,air,sea',
+            'icon' => 'nullable|string|max:32',
             'multiplier' => 'required|numeric',
             'delivery_days_offset' => 'required|integer',
         ]);
@@ -125,6 +127,8 @@ class AdminController extends Controller
         $attributes = $request->validate([
             'name_en' => 'required|string',
             'name_ku' => 'required|string',
+            'transport_method' => 'nullable|in:ground,air,sea',
+            'icon' => 'nullable|string|max:32',
             'multiplier' => 'required|numeric',
             'delivery_days_offset' => 'required|integer',
         ]);

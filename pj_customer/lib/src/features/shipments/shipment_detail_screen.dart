@@ -204,14 +204,32 @@ class _ShipmentDetailBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            L10n.of(context)!.route,
+            _screenText(context, ku: 'بەرهەم', en: 'Product'),
             style: TextStyle(fontSize: 13, color: AppTheme.muted),
           ),
+          Text(_productTitle, style: Theme.of(context).textTheme.displaySmall),
+          const SizedBox(height: 8),
           Text(
-            '${shipment.origin}\n\u{2192} ${shipment.destination}',
-            style: Theme.of(context).textTheme.displaySmall,
+            L10n.of(context)!.routeArrow(shipment.origin, shipment.destination),
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppTheme.ink,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 6),
+          if (shipment.productColor != null || shipment.productSize != null)
+            Text(
+              [
+                if (shipment.productColor case final color?)
+                  '${_screenText(context, ku: 'ڕەنگ', en: 'Color')}: $color',
+                if (shipment.productSize case final size?)
+                  '${_screenText(context, ku: 'قەبارە', en: 'Size')}: $size',
+              ].join(' - '),
+              style: const TextStyle(fontSize: 12, color: AppTheme.muted),
+            ),
+          if (shipment.productColor != null || shipment.productSize != null)
+            const SizedBox(height: 4),
           Text(
             '$weightOrSize - ${L10n.of(context)!.estimatedDelivery}: ${shipment.estimatedDeliveryDays} ${L10n.of(context)!.days}',
             style: const TextStyle(fontSize: 12, color: AppTheme.muted),
@@ -219,6 +237,26 @@ class _ShipmentDetailBody extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String get _productTitle {
+    final title = shipment.productTitle?.trim();
+    if (title != null && title.isNotEmpty) {
+      return title;
+    }
+
+    final platform = shipment.productPlatform?.trim();
+    return platform == null || platform.isEmpty
+        ? shipment.id.substring(0, 8)
+        : platform.toUpperCase();
+  }
+
+  String _screenText(
+    BuildContext context, {
+    required String ku,
+    required String en,
+  }) {
+    return L10n.of(context)!.localeName == 'ku' ? ku : en;
   }
 
   Widget _buildTimeline(

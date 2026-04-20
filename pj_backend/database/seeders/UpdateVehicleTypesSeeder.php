@@ -9,23 +9,21 @@ class UpdateVehicleTypesSeeder extends Seeder
 {
     public function run(): void
     {
-        // Update existing vehicle types with transport methods and icons
         VehicleType::where('name_en', 'Motorcycle')->update([
             'transport_method' => 'ground',
-            'icon' => '🏍️'
+            'icon' => '🏍️',
         ]);
 
         VehicleType::where('name_en', 'Car')->update([
             'transport_method' => 'ground',
-            'icon' => '🚗'
+            'icon' => '🚗',
         ]);
 
         VehicleType::where('name_en', 'Truck')->update([
             'transport_method' => 'ground',
-            'icon' => '🚛'
+            'icon' => '🚛',
         ]);
 
-        // Add new airplane transport method
         VehicleType::updateOrCreate([
             'name_en' => 'Airplane',
         ], [
@@ -34,10 +32,9 @@ class UpdateVehicleTypesSeeder extends Seeder
             'multiplier' => 2.5,
             'delivery_days_offset' => -2,
             'transport_method' => 'air',
-            'icon' => '✈️'
+            'icon' => '✈️',
         ]);
 
-        // Add additional ground transport options
         VehicleType::updateOrCreate([
             'name_en' => 'Van',
         ], [
@@ -46,7 +43,18 @@ class UpdateVehicleTypesSeeder extends Seeder
             'multiplier' => 1.1,
             'delivery_days_offset' => 0,
             'transport_method' => 'ground',
-            'icon' => '🚐'
+            'icon' => '🚐',
+        ]);
+
+        VehicleType::updateOrCreate([
+            'name_en' => 'Ship',
+        ], [
+            'name_en' => 'Ship',
+            'name_ku' => 'کەشتی',
+            'multiplier' => 0.8,
+            'delivery_days_offset' => 10,
+            'transport_method' => 'sea',
+            'icon' => '🚢',
         ]);
     }
 }

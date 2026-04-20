@@ -24,13 +24,14 @@ class ShipmentAccessAndSearchTest extends TestCase
 
         $category = Category::create([
             'name_en' => 'General',
-            'name_ku' => 'Gashti',
+            'name_ku' => 'گشتی',
             'surcharge' => 0,
         ]);
 
         $vehicleType = VehicleType::create([
             'name_en' => 'Car',
-            'name_ku' => 'Otomobil',
+            'name_ku' => 'ئۆتۆمبێل',
+            'transport_method' => 'ground',
             'multiplier' => 1.2,
             'delivery_days_offset' => 1,
         ]);
@@ -60,6 +61,131 @@ class ShipmentAccessAndSearchTest extends TestCase
         $this->assertDatabaseCount('shipments', 0);
     }
 
+    public function test_customer_can_create_import_shipment_to_kurdistan(): void
+    {
+        [$category, $vehicleType] = $this->seedCatalog();
+
+        $customer = User::factory()->create([
+            'role' => 'customer',
+            'is_active' => true,
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson('/api/v1/shipments', [
+            'origin' => 'Istanbul Supplier Warehouse',
+            'destination' => 'Erbil, Kurdistan',
+            'product_url' => 'https://www.amazon.com/Example-Product/dp/B09G9FPHY6',
+            'product_color' => 'Black',
+            'product_size' => 'M',
+            'weight_kg' => 12.5,
+            'category_id' => $category->id,
+            'vehicle_type_id' => $vehicleType->id,
+        ])->assertCreated()
+            ->assertJsonPath('origin', 'Istanbul Supplier Warehouse')
+            ->assertJsonPath('destination', 'Erbil, Kurdistan')
+            ->assertJsonPath('product_platform', 'amazon')
+            ->assertJsonPath('product_external_id', 'B09G9FPHY6')
+            ->assertJsonPath('product_color', 'Black')
+            ->assertJsonPath('product_size', 'M');
+
+        $this->assertDatabaseHas('shipments', [
+            'customer_id' => $customer->id,
+            'origin' => 'Istanbul Supplier Warehouse',
+            'destination' => 'Erbil, Kurdistan',
+            'product_platform' => 'amazon',
+            'product_url' => 'https://www.amazon.com/Example-Product/dp/B09G9FPHY6',
+            'product_external_id' => 'B09G9FPHY6',
+            'product_color' => 'Black',
+            'product_size' => 'M',
+            'status' => 'pending',
+        ]);
+    }
+
+    public function test_customer_can_preview_marketplace_product_link(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+            'is_active' => true,
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson('/api/v1/product-links/preview', [
+            'url' => 'https://www.amazon.com/Example-Product/dp/B09G9FPHY6',
+        ])->assertOk()
+            ->assertJsonPath('platform', 'amazon')
+            ->assertJsonPath('platform_label', 'Amazon')
+            ->assertJsonPath('external_id', 'B09G9FPHY6');
+    }
+
+    public function test_unsupported_product_link_is_rejected(): void
+    {
+        $customer = User::factory()->create([
+            'role' => 'customer',
+            'is_active' => true,
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson('/api/v1/product-links/preview', [
+            'url' => 'https://example.com/products/1',
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('product_url');
+    }
+
+    public function test_customer_cannot_create_export_shipment_outside_kurdistan(): void
+    {
+        [$category, $vehicleType] = $this->seedCatalog();
+
+        $customer = User::factory()->create([
+            'role' => 'customer',
+            'is_active' => true,
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson('/api/v1/shipments', [
+            'origin' => 'Erbil Warehouse',
+            'destination' => 'Istanbul, Turkey',
+            'product_url' => 'https://www.amazon.com/Example-Product/dp/B09G9FPHY6',
+            'product_color' => 'Black',
+            'product_size' => 'M',
+            'weight_kg' => 12.5,
+            'category_id' => $category->id,
+            'vehicle_type_id' => $vehicleType->id,
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('destination');
+
+        $this->assertDatabaseCount('shipments', 0);
+    }
+
+    public function test_customer_cannot_create_domestic_shipment_inside_kurdistan(): void
+    {
+        [$category, $vehicleType] = $this->seedCatalog();
+
+        $customer = User::factory()->create([
+            'role' => 'customer',
+            'is_active' => true,
+        ]);
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson('/api/v1/shipments', [
+            'origin' => 'Erbil Warehouse',
+            'destination' => 'Duhok Market',
+            'product_url' => 'https://www.alibaba.com/product-detail/Example-product_1601234567890.html',
+            'product_color' => 'White',
+            'product_size' => '42',
+            'weight_kg' => 12.5,
+            'category_id' => $category->id,
+            'vehicle_type_id' => $vehicleType->id,
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('origin');
+
+        $this->assertDatabaseCount('shipments', 0);
+    }
+
     public function test_customer_can_search_shipments_by_uuid_fragment(): void
     {
         [$category, $vehicleType] = $this->seedCatalog();
@@ -76,8 +202,8 @@ class ShipmentAccessAndSearchTest extends TestCase
 
         $matchingShipment = Shipment::create([
             'customer_id' => $customer->id,
-            'origin' => 'Erbil Warehouse',
-            'destination' => 'Baghdad Center',
+            'origin' => 'Istanbul Supplier Warehouse',
+            'destination' => 'Erbil Import Hub',
             'weight_kg' => 3.5,
             'category_id' => $category->id,
             'vehicle_type_id' => $vehicleType->id,
@@ -89,8 +215,8 @@ class ShipmentAccessAndSearchTest extends TestCase
 
         Shipment::create([
             'customer_id' => $otherCustomer->id,
-            'origin' => 'Duhok Market',
-            'destination' => 'Mosul Gate',
+            'origin' => 'Dubai Free Zone',
+            'destination' => 'Duhok Delivery Center',
             'weight_kg' => 5,
             'category_id' => $category->id,
             'vehicle_type_id' => $vehicleType->id,
@@ -133,8 +259,8 @@ class ShipmentAccessAndSearchTest extends TestCase
         $shipment = Shipment::create([
             'customer_id' => $customer->id,
             'driver_id' => $driver->id,
-            'origin' => 'Erbil Warehouse',
-            'destination' => 'Baghdad Center',
+            'origin' => 'Guangzhou Electronics Market',
+            'destination' => 'Sulaimani Delivery Center',
             'weight_kg' => 3.5,
             'category_id' => $category->id,
             'vehicle_type_id' => $vehicleType->id,
@@ -173,8 +299,8 @@ class ShipmentAccessAndSearchTest extends TestCase
 
         $shipment = Shipment::create([
             'customer_id' => $customer->id,
-            'origin' => 'Erbil Warehouse',
-            'destination' => 'Baghdad Center',
+            'origin' => 'Istanbul Supplier Warehouse',
+            'destination' => 'Erbil Import Hub',
             'weight_kg' => 3.5,
             'category_id' => $category->id,
             'vehicle_type_id' => $vehicleType->id,
@@ -207,8 +333,8 @@ class ShipmentAccessAndSearchTest extends TestCase
 
         $shipment = Shipment::create([
             'customer_id' => $customer->id,
-            'origin' => 'Erbil Warehouse',
-            'destination' => 'Baghdad Center',
+            'origin' => 'Istanbul Supplier Warehouse',
+            'destination' => 'Erbil Import Hub',
             'weight_kg' => 3.5,
             'category_id' => $category->id,
             'vehicle_type_id' => $vehicleType->id,
@@ -236,8 +362,8 @@ class ShipmentAccessAndSearchTest extends TestCase
 
         $shipment = Shipment::create([
             'customer_id' => $customer->id,
-            'origin' => 'Erbil Warehouse',
-            'destination' => 'Baghdad Center',
+            'origin' => 'Istanbul Supplier Warehouse',
+            'destination' => 'Erbil Import Hub',
             'weight_kg' => 3.5,
             'category_id' => $category->id,
             'vehicle_type_id' => $vehicleType->id,
@@ -255,7 +381,7 @@ class ShipmentAccessAndSearchTest extends TestCase
             'customer_comment' => 'The package has an issue.',
         ])->assertStatus(422)
             ->assertJsonFragment([
-                'message' => 'This shipment has already been confirmed as delivered.',
+                'message' => 'This import has already been confirmed as delivered.',
             ]);
 
         $this->assertDatabaseCount('reports', 0);

@@ -12,7 +12,7 @@ class L10nEn extends L10n {
   String get appTitle => 'LTMS';
 
   @override
-  String get appSubtitle => 'Logistics & Transportation Management';
+  String get appSubtitle => 'Kurdistan Import Logistics Management';
 
   @override
   String get login => 'Login';
@@ -54,13 +54,13 @@ class L10nEn extends L10n {
   String get dashboard => 'Dashboard';
 
   @override
-  String get shipments => 'Shipments';
+  String get shipments => 'Imports';
 
   @override
-  String get myShipments => 'My Shipments';
+  String get myShipments => 'My Imports';
 
   @override
-  String get assignedShipments => 'Assigned Shipments';
+  String get assignedShipments => 'Assigned Imports';
 
   @override
   String get reports => 'Reports';
@@ -70,12 +70,12 @@ class L10nEn extends L10n {
 
   @override
   String shipmentsCount(int count) {
-    return '$count shipments';
+    return '$count imports';
   }
 
   @override
   String shipmentCount(int count) {
-    return '$count shipment';
+    return '$count import';
   }
 
   @override
@@ -173,7 +173,7 @@ class L10nEn extends L10n {
   String get liveTracking => 'LIVE TRACKING';
 
   @override
-  String get route => 'ROUTE';
+  String get route => 'IMPORT ROUTE';
 
   @override
   String get orderPlaced => 'Order Placed';
@@ -194,16 +194,16 @@ class L10nEn extends L10n {
   String get about => 'About';
 
   @override
-  String get newShipment => 'New Shipment';
+  String get newShipment => 'New Import';
 
   @override
-  String get createShipment => 'Create Shipment';
+  String get createShipment => 'Create Import Request';
 
   @override
-  String get origin => 'Origin';
+  String get origin => 'Source';
 
   @override
-  String get destination => 'Destination';
+  String get destination => 'Kurdistan Delivery';
 
   @override
   String get weight => 'Weight (kg)';
@@ -224,16 +224,16 @@ class L10nEn extends L10n {
   String get days => 'days';
 
   @override
-  String get shipmentDetails => 'Shipment Details';
+  String get shipmentDetails => 'Import Details';
 
   @override
-  String get shipmentStatus => 'Status';
+  String get shipmentStatus => 'Import Status';
 
   @override
   String get priceBreakdown => 'Price Breakdown';
 
   @override
-  String get trackShipment => 'Track Shipment';
+  String get trackShipment => 'Track Import';
 
   @override
   String get pending => 'Pending';
@@ -269,7 +269,7 @@ class L10nEn extends L10n {
   String get search => 'Search';
 
   @override
-  String get searchPlaceholder => 'Search shipments...';
+  String get searchPlaceholder => 'Search imports...';
 
   @override
   String get filter => 'Filter';
@@ -525,16 +525,16 @@ class L10nEn extends L10n {
   String get reportedCount => 'Reported';
 
   @override
-  String get newShipmentBtn => '+ New Shipment';
+  String get newShipmentBtn => '+ New Import';
 
   @override
-  String get noShipmentsYet => 'No shipments yet';
+  String get noShipmentsYet => 'No import requests yet';
 
   @override
-  String get createFirstShipment => 'Create your first shipment above';
+  String get createFirstShipment => 'Create your first import request above';
 
   @override
-  String get recentShipments => 'RECENT SHIPMENTS';
+  String get recentShipments => 'RECENT IMPORTS';
 
   @override
   String get helpAndFaq => 'Help & FAQ';
@@ -555,7 +555,7 @@ class L10nEn extends L10n {
   String get switchToDark => 'Switch to dark theme';
 
   @override
-  String get receiveAlerts => 'Receive alerts for your shipments';
+  String get receiveAlerts => 'Receive alerts for your imports';
 
   @override
   String get helpFaqLink => 'Help & FAQ';
@@ -564,7 +564,7 @@ class L10nEn extends L10n {
   String get contactSupport => 'Contact Support';
 
   @override
-  String get updatesFromShipments => 'Updates from your shipments';
+  String get updatesFromShipments => 'Updates from your imports';
 
   @override
   String get noNotificationsYet => 'No notifications yet';
@@ -573,7 +573,7 @@ class L10nEn extends L10n {
   String get allCaughtUp => 'You\'re all caught up!';
 
   @override
-  String get shipmentUpdate => 'Shipment Update';
+  String get shipmentUpdate => 'Import Update';
 
   @override
   String get reportUpdate => 'Report Update';
@@ -595,10 +595,10 @@ class L10nEn extends L10n {
 
   @override
   String get confirmDeliveryQuestion =>
-      'Has your shipment been delivered successfully?';
+      'Have your imported goods been delivered successfully?';
 
   @override
-  String get deliveredSuccessfully => 'Shipment delivered successfully.';
+  String get deliveredSuccessfully => 'Imported goods delivered successfully.';
 
   @override
   String get myAssignments => 'MY ASSIGNMENTS';
@@ -613,10 +613,10 @@ class L10nEn extends L10n {
   String get overview => 'Overview';
 
   @override
-  String get systemOverview => 'System-wide shipment overview';
+  String get systemOverview => 'System-wide import overview';
 
   @override
-  String get signInToManage => 'Sign in to manage your shipments';
+  String get signInToManage => 'Sign in to manage imports';
 
   @override
   String get dontHaveAccount => 'Don\'t have an account?';
@@ -646,7 +646,7 @@ class L10nEn extends L10n {
   String get tryDifferentFilter => 'Try selecting a different filter';
 
   @override
-  String get failedToLoadShipments => 'Failed to load shipments';
+  String get failedToLoadShipments => 'Failed to load imports';
 
   @override
   String get failedToLoad => 'Failed to load';
@@ -655,7 +655,7 @@ class L10nEn extends L10n {
   String get newBtn => 'New';
 
   @override
-  String get noShipmentsFilter => 'No shipments';
+  String get noShipmentsFilter => 'No imports';
 
   @override
   String get catalogLabel => 'Catalog';
@@ -679,10 +679,10 @@ class L10nEn extends L10n {
   String get welcomeBackTitle => 'Welcome\nback.';
 
   @override
-  String get shipmentMonitor => 'Shipment Monitor';
+  String get shipmentMonitor => 'Import Monitor';
 
   @override
-  String get monitorSubtitle => 'Monitor and manage all shipments';
+  String get monitorSubtitle => 'Monitor goods imported to Kurdistan';
 
   @override
   String get driverLabel => 'DRIVER';
@@ -703,7 +703,7 @@ class L10nEn extends L10n {
   String get staffDashboard => 'Staff Dashboard';
 
   @override
-  String get shipmentList => 'Shipment List';
+  String get shipmentList => 'Import List';
 
   @override
   String get incidentReports => 'Incident Reports';
@@ -770,7 +770,7 @@ class L10nEn extends L10n {
 
   @override
   String get messageEnHint =>
-      'e.g. Your shipment has arrived at Erbil hub and is ready for pickup.';
+      'e.g. Your imported goods have arrived at Erbil hub and are ready for pickup.';
 
   @override
   String get messageKuLabel => 'MESSAGE (KURDISH)';
@@ -891,10 +891,10 @@ class L10nEn extends L10n {
   String get adminRole => 'Admin';
 
   @override
-  String get splashTagline => 'Ship anything, anywhere.';
+  String get splashTagline => 'Import goods to Kurdistan with confidence.';
 
   @override
-  String get splashSubtitle => 'The smarter way to manage your logistics';
+  String get splashSubtitle => 'The smarter way to manage import logistics';
 
   @override
   String get getStarted => 'Get Started →';
@@ -921,14 +921,14 @@ class L10nEn extends L10n {
   String get backBtn => '← Back';
 
   @override
-  String get whereIsItGoing => 'Where is it going?';
+  String get whereIsItGoing => 'Where in Kurdistan is it going?';
 
   @override
   String get enterOriginDestination =>
-      'Enter origin and destination for your shipment.';
+      'Enter the supplier/source location and the Kurdistan delivery city.';
 
   @override
-  String get whatAreSending => 'What are you sending?';
+  String get whatAreSending => 'What goods are you importing?';
 
   @override
   String get weightKg => 'WEIGHT (KG)';
@@ -945,19 +945,19 @@ class L10nEn extends L10n {
   }
 
   @override
-  String get shipmentSummary => 'SHIPMENT SUMMARY';
+  String get shipmentSummary => 'IMPORT SUMMARY';
 
   @override
-  String get confirmShipment => 'Confirm Shipment';
+  String get confirmShipment => 'Confirm Import Request';
 
   @override
-  String get shipmentCreated => 'Shipment created! 🎉';
+  String get shipmentCreated => 'Import request created! 🎉';
 
   @override
   String get vehicleStep => 'Vehicle';
 
   @override
-  String get routeStep => 'Route';
+  String get routeStep => 'Import Route';
 
   @override
   String get detailsStep => 'Details';
@@ -1009,7 +1009,7 @@ class L10nEn extends L10n {
       'Please enter valid numbers for L, W, and H.';
 
   @override
-  String get signInToDeliveries => 'Sign in to manage your deliveries';
+  String get signInToDeliveries => 'Sign in to manage import deliveries';
 
   @override
   String get loginFailed => 'Login failed';
@@ -1059,7 +1059,7 @@ class L10nEn extends L10n {
 
   @override
   String get createAccountSubtitle =>
-      'Ship smarter — track your first order in minutes';
+      'Import smarter - track your first order in minutes';
 
   @override
   String get signInToStaffPortal => 'Sign in to the staff portal';
@@ -1071,14 +1071,14 @@ class L10nEn extends L10n {
   String get reportSubmitted => 'Report submitted ✓';
 
   @override
-  String get shipmentLabel => 'SHIPMENT';
+  String get shipmentLabel => 'IMPORT';
 
   @override
   String get describeProblem => 'DESCRIBE THE PROBLEM';
 
   @override
   String get teamWillReview =>
-      'Our team will review your report and respond within 24–48 hours.';
+      'Our team will review your report and respond within 24-48 hours.';
 
   @override
   String get reportAnIssue => 'Report an Issue';
@@ -1087,16 +1087,16 @@ class L10nEn extends L10n {
   String get problemHint => 'e.g. Package arrived damaged — screen is cracked…';
 
   @override
-  String get originCity => '📍 ORIGIN CITY';
+  String get originCity => '📍 SOURCE CITY / COUNTRY';
 
   @override
-  String get destinationCity => '🏁 DESTINATION CITY';
+  String get destinationCity => '🏁 KURDISTAN DELIVERY CITY';
 
   @override
-  String get originHint => 'e.g. Erbil';
+  String get originHint => 'e.g. Istanbul, Dubai, Guangzhou';
 
   @override
-  String get destinationHint => 'e.g. Istanbul';
+  String get destinationHint => 'e.g. Erbil, Sulaimani, Duhok';
 
   @override
   String newUnread(int count) {
@@ -1143,10 +1143,10 @@ class L10nEn extends L10n {
   String get signOutSettings => 'Sign Out';
 
   @override
-  String get noShipmentsFound => 'No shipments found';
+  String get noShipmentsFound => 'No imports found';
 
   @override
-  String get errorLoadingShipments => 'Error loading shipments';
+  String get errorLoadingShipments => 'Error loading imports';
 
   @override
   String get errorLoading => 'Error loading';
@@ -1210,10 +1210,10 @@ class L10nEn extends L10n {
   String get backButton => 'Back';
 
   @override
-  String get confirmShipmentButton => 'Confirm Shipment';
+  String get confirmShipmentButton => 'Confirm Import Request';
 
   @override
-  String get shipmentCreatedSuccess => 'Shipment created!';
+  String get shipmentCreatedSuccess => 'Import request created!';
 
   @override
   String shipmentCreatedError(String error) {
@@ -1221,7 +1221,7 @@ class L10nEn extends L10n {
   }
 
   @override
-  String get newShipmentButton => '+ New Shipment';
+  String get newShipmentButton => '+ New Import';
 
   @override
   String get helpFaq => 'Help & FAQ';
@@ -1292,6 +1292,14 @@ class L10nEn extends L10n {
 
   @override
   String get staffSidebar => 'LTMS Staff';
+
+  @override
+  String get originOutsideKurdistanRequired =>
+      'Source must be outside Kurdistan for an import request.';
+
+  @override
+  String get destinationKurdistanRequired =>
+      'Destination must be a delivery city in Kurdistan.';
 
   @override
   String get lengthLabel => 'Length';

@@ -387,7 +387,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     ),
                                     DataCell(
                                       Text(
-                                        '${s.origin} \u{2192} ${s.destination}',
+                                        l10n.routeArrow(
+                                          s.origin,
+                                          s.destination,
+                                        ),
                                       ),
                                     ),
                                     DataCell(

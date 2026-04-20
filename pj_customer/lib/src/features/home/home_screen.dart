@@ -76,13 +76,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     // â”€â”€ Greeting slides from left â”€â”€
-    _greetSlide = Tween<Offset>(
-      begin: const Offset(-0.4, 0),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _entranceCtrl,
-      curve: const Interval(0.00, 0.38, curve: Curves.easeOutCubic),
-    ));
+    _greetSlide = Tween<Offset>(begin: const Offset(-0.4, 0), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceCtrl,
+            curve: const Interval(0.00, 0.38, curve: Curves.easeOutCubic),
+          ),
+        );
     _greetOpacity = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _entranceCtrl,
@@ -91,13 +91,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     // â”€â”€ Stats card slides up â”€â”€
-    _statsSlide = Tween<Offset>(
-      begin: const Offset(0, 0.6),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _entranceCtrl,
-      curve: const Interval(0.15, 0.52, curve: Curves.easeOutCubic),
-    ));
+    _statsSlide = Tween<Offset>(begin: const Offset(0, 0.6), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceCtrl,
+            curve: const Interval(0.15, 0.52, curve: Curves.easeOutCubic),
+          ),
+        );
     _statsOpacity = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _entranceCtrl,
@@ -120,13 +120,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     // â”€â”€ Section title â”€â”€
-    _sectionSlide = Tween<Offset>(
-      begin: const Offset(0, 0.5),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _entranceCtrl,
-      curve: const Interval(0.42, 0.68, curve: Curves.easeOutCubic),
-    ));
+    _sectionSlide = Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceCtrl,
+            curve: const Interval(0.42, 0.68, curve: Curves.easeOutCubic),
+          ),
+        );
     _sectionOpacity = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _entranceCtrl,
@@ -135,13 +135,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     // â”€â”€ FAQ card â”€â”€
-    _faqSlide = Tween<Offset>(
-      begin: const Offset(0, 0.5),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _entranceCtrl,
-      curve: const Interval(0.72, 1.00, curve: Curves.easeOutCubic),
-    ));
+    _faqSlide = Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceCtrl,
+            curve: const Interval(0.72, 1.00, curve: Curves.easeOutCubic),
+          ),
+        );
     _faqOpacity = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _entranceCtrl,
@@ -173,7 +173,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     final l10n = L10n.of(context)!;
     final hour = DateTime.now().hour;
-    final greeting = hour < 12 ? l10n.goodMorning : hour < 17 ? l10n.goodAfternoon : l10n.goodEvening;
+    final greeting = hour < 12
+        ? l10n.goodMorning
+        : hour < 17
+        ? l10n.goodAfternoon
+        : l10n.goodEvening;
 
     return Scaffold(
       body: SafeArea(
@@ -196,7 +200,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(greeting, style: tt.bodySmall),
-                        Text(user?.name ?? l10n.customer, style: tt.displaySmall),
+                        Text(
+                          user?.name ?? l10n.customer,
+                          style: tt.displaySmall,
+                        ),
                       ],
                     ),
                     // â”€â”€ Language toggle + bell â”€â”€
@@ -206,11 +213,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           builder: (context, ref, _) {
                             final locale = ref.watch(localeProvider);
                             return TextButton(
-                              onPressed: () => ref.read(localeProvider.notifier).toggle(),
-                              style: TextButton.styleFrom(minimumSize: Size.zero, padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6)),
+                              onPressed: () =>
+                                  ref.read(localeProvider.notifier).toggle(),
+                              style: TextButton.styleFrom(
+                                minimumSize: Size.zero,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 6,
+                                ),
+                              ),
                               child: Text(
-                                locale.languageCode == 'en' ? '\u{1F310} کوردی' : '\u{1F310} ئینگلیزی',
-                                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                                locale.languageCode == 'en'
+                                    ? '\u{1F310} کوردی'
+                                    : '\u{1F310} ئینگلیزی',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                ),
                               ),
                             );
                           },
@@ -240,8 +259,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                     border: Border.all(color: AppTheme.border),
                                   ),
                                   child: const Center(
-                                    child: Text('\u{1F514}', // Bell 🔔
-                                        style: TextStyle(fontSize: 17)),
+                                    child: Text(
+                                      '\u{1F514}', // Bell 🔔
+                                      style: TextStyle(fontSize: 17),
+                                    ),
                                   ),
                                 ),
                                 Positioned(
@@ -254,7 +275,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                       shape: BoxShape.circle,
                                       color: AppTheme.red,
                                       border: Border.all(
-                                          color: AppTheme.card, width: 1.5),
+                                        color: AppTheme.card,
+                                        width: 1.5,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -274,8 +297,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 animation: _entranceCtrl,
                 builder: (_, child) => SlideTransition(
                   position: _statsSlide,
-                  child:
-                      FadeTransition(opacity: _statsOpacity, child: child),
+                  child: FadeTransition(opacity: _statsOpacity, child: child),
                 ),
                 child: Container(
                   padding: const EdgeInsets.all(20),
@@ -301,15 +323,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       return Row(
                         children: [
                           _AnimatedStat(
-                              value: shipments.length, label: l10n.total),
+                            value: shipments.length,
+                            label: l10n.total,
+                          ),
                           const SizedBox(width: 10),
                           _AnimatedStat(
-                              value: inTransit, label: l10n.inTransitCount),
-                          const SizedBox(width: 10),
-                          _AnimatedStat(value: pending, label: l10n.pendingCount),
+                            value: inTransit,
+                            label: l10n.inTransitCount,
+                          ),
                           const SizedBox(width: 10),
                           _AnimatedStat(
-                              value: delivered, label: l10n.deliveredCount),
+                            value: pending,
+                            label: l10n.pendingCount,
+                          ),
+                          const SizedBox(width: 10),
+                          _AnimatedStat(
+                            value: delivered,
+                            label: l10n.deliveredCount,
+                          ),
                         ],
                       );
                     },
@@ -317,7 +348,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       height: 52,
                       child: Center(
                         child: CircularProgressIndicator(
-                            color: Colors.white, strokeWidth: 2),
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
                       ),
                     ),
                     error: (_, _) => Row(
@@ -325,9 +358,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         _AnimatedStat(value: 0, label: l10n.total, dash: true),
                         const SizedBox(width: 10),
                         _AnimatedStat(
-                            value: 0, label: l10n.inTransitCount, dash: true),
+                          value: 0,
+                          label: l10n.inTransitCount,
+                          dash: true,
+                        ),
                         const SizedBox(width: 10),
-                        _AnimatedStat(value: 0, label: l10n.pendingCount, dash: true),
+                        _AnimatedStat(
+                          value: 0,
+                          label: l10n.pendingCount,
+                          dash: true,
+                        ),
                       ],
                     ),
                   ),
@@ -337,18 +377,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
               // â”€â”€ New Shipment Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               AnimatedBuilder(
-                animation:
-                    Listenable.merge([_entranceCtrl, _btnPressCtrl]),
+                animation: Listenable.merge([_entranceCtrl, _btnPressCtrl]),
                 builder: (_, child) {
                   final pressScale = Tween<double>(begin: 1.0, end: 0.96)
-                      .animate(CurvedAnimation(
+                      .animate(
+                        CurvedAnimation(
                           parent: _btnPressCtrl,
-                          curve: Curves.easeInOut))
+                          curve: Curves.easeInOut,
+                        ),
+                      )
                       .value;
                   return Transform.scale(
                     scale: _btnScale.value * pressScale,
-                    child: FadeTransition(
-                        opacity: _btnOpacity, child: child),
+                    child: FadeTransition(opacity: _btnOpacity, child: child),
                   );
                 },
                 child: GestureDetector(
@@ -372,15 +413,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       ],
                     ),
                     child: Center(
-                        child: Text(
-                          l10n.newShipmentBtn,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
+                      child: Text(
+                        l10n.newShipmentBtn,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
                         ),
                       ),
+                    ),
                   ),
                 ),
               ),
@@ -391,13 +432,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 animation: _entranceCtrl,
                 builder: (_, child) => SlideTransition(
                   position: _sectionSlide,
-                  child: FadeTransition(
-                      opacity: _sectionOpacity, child: child),
+                  child: FadeTransition(opacity: _sectionOpacity, child: child),
                 ),
                 child: Text(
                   l10n.recentShipments,
                   style: tt.labelLarge?.copyWith(
-                      color: AppTheme.ink, fontWeight: FontWeight.w800),
+                    color: AppTheme.ink,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -420,25 +462,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('\u{1F4E6}', // Package 📦
-                                style: TextStyle(fontSize: 40)),
+                            const Text(
+                              '\u{1F4E6}', // Package 📦
+                              style: TextStyle(fontSize: 40),
+                            ),
                             const SizedBox(height: 8),
-                            Text(l10n.noShipmentsYet,
-                                style: tt.titleMedium),
-                            Text(l10n.createFirstShipment,
-                                style: tt.bodySmall),
+                            Text(l10n.noShipmentsYet, style: tt.titleMedium),
+                            Text(l10n.createFirstShipment, style: tt.bodySmall),
                           ],
                         ),
                       ),
                     );
                   }
                   return Column(
-                    children: shipments
-                        .take(3)
-                        .toList()
-                        .asMap()
-                        .entries
-                        .map((e) {
+                    children: shipments.take(3).toList().asMap().entries.map((
+                      e,
+                    ) {
                       final i = e.key;
                       final s = e.value;
                       return Padding(
@@ -452,14 +491,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             destination: s.destination,
                             id: s.id,
                             weightOrSize: s.weightKg != null
-                                ? L10n.of(context)!.kgUnit(
-                                    s.weightKg!.toStringAsFixed(0),
-                                  )
+                                ? L10n.of(
+                                    context,
+                                  )!.kgUnit(s.weightKg!.toStringAsFixed(0))
                                 : s.size ?? '',
                             price: s.totalPrice,
                             status: s.status.name,
-                            onTap: () =>
-                                context.push('/shipments/${s.id}'),
+                            onTap: () => context.push('/shipments/${s.id}'),
                           ),
                         ),
                       );
@@ -495,8 +533,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Center(
-                          child:
-                              Text('\u{2753}', style: TextStyle(fontSize: 18)), // Question ❓
+                          child: Text(
+                            '\u{2753}',
+                            style: TextStyle(fontSize: 18),
+                          ), // Question ❓
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -504,8 +544,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(l10n.helpAndFaq,
-                                style: Theme.of(context).textTheme.titleMedium),
+                            Text(
+                              l10n.helpAndFaq,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
                             Text(
                               l10n.findAnswers,
                               style: Theme.of(context).textTheme.bodySmall,
@@ -513,9 +555,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           ],
                         ),
                       ),
-                      Text('\u{203A}', // Arrow ›
-                          style: TextStyle(
-                              color: AppTheme.muted, fontSize: 22)),
+                      Text(
+                        '\u{203A}', // Arrow ›
+                        style: TextStyle(color: AppTheme.muted, fontSize: 22),
+                      ),
                     ],
                   ),
                 ),
@@ -557,9 +600,10 @@ class _AnimatedStatState extends State<_AnimatedStat>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
-    _count = IntTween(begin: 0, end: widget.value).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic),
-    );
+    _count = IntTween(
+      begin: 0,
+      end: widget.value,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
     _ctrl.forward();
   }
 
@@ -626,21 +670,21 @@ class _StaggerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final end = (startInterval + 0.30).clamp(0.0, 1.0);
-    final slide = Tween<Offset>(
-      begin: const Offset(0, 0.55),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: parent,
-        curve: Interval(startInterval, end, curve: Curves.easeOutCubic),
-      ),
-    );
+    final slide = Tween<Offset>(begin: const Offset(0, 0.55), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: parent,
+            curve: Interval(startInterval, end, curve: Curves.easeOutCubic),
+          ),
+        );
     final opacity = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: parent,
         curve: Interval(
-            startInterval, (startInterval + 0.22).clamp(0.0, 1.0),
-            curve: Curves.easeOut),
+          startInterval,
+          (startInterval + 0.22).clamp(0.0, 1.0),
+          curve: Curves.easeOut,
+        ),
       ),
     );
     return AnimatedBuilder(
@@ -678,9 +722,10 @@ class _TappableCardState extends State<_TappableCard>
       duration: const Duration(milliseconds: 100),
       reverseDuration: const Duration(milliseconds: 180),
     );
-    _scale = Tween<double>(begin: 1.0, end: 0.97).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
-    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 0.97,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -703,8 +748,7 @@ class _TappableCardState extends State<_TappableCard>
         builder: (_, child) =>
             Transform.scale(scale: _scale.value, child: child),
         child: Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
           decoration: BoxDecoration(
             color: AppTheme.card,
             borderRadius: BorderRadius.circular(14),
@@ -751,9 +795,10 @@ class _ShipmentCardState extends State<_ShipmentCard>
       duration: const Duration(milliseconds: 100),
       reverseDuration: const Duration(milliseconds: 180),
     );
-    _scale = Tween<double>(begin: 1.0, end: 0.97).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
-    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 0.97,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -788,7 +833,9 @@ class _ShipmentCardState extends State<_ShipmentCard>
                 children: [
                   Expanded(
                     child: Text(
-                      '${widget.origin} \u{2192} ${widget.destination}', // Arrow →
+                      L10n.of(
+                        context,
+                      )!.routeArrow(widget.origin, widget.destination),
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
@@ -842,25 +889,21 @@ class _StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final (Color bg, Color fg, Color dot) = switch (status.toLowerCase()) {
       'intransit' || 'in_transit' => (
-          AppTheme.blueLight,
-          const Color(0xFF1D4ED8),
-          AppTheme.blue
-        ),
+        AppTheme.blueLight,
+        const Color(0xFF1D4ED8),
+        AppTheme.blue,
+      ),
       'pending' => (
-          AppTheme.amberLight,
-          const Color(0xFF92400E),
-          AppTheme.amber
-        ),
+        AppTheme.amberLight,
+        const Color(0xFF92400E),
+        AppTheme.amber,
+      ),
       'delivered' => (
-          AppTheme.tealLight,
-          const Color(0xFF065F46),
-          AppTheme.teal
-        ),
-      'reported' => (
-          AppTheme.redLight,
-          const Color(0xFF991B1B),
-          AppTheme.red
-        ),
+        AppTheme.tealLight,
+        const Color(0xFF065F46),
+        AppTheme.teal,
+      ),
+      'reported' => (AppTheme.redLight, const Color(0xFF991B1B), AppTheme.red),
       _ => (AppTheme.amberLight, const Color(0xFF92400E), AppTheme.amber),
     };
 
@@ -876,8 +919,7 @@ class _StatusBadge extends StatelessWidget {
           Container(
             width: 6,
             height: 6,
-            decoration:
-                BoxDecoration(shape: BoxShape.circle, color: dot),
+            decoration: BoxDecoration(shape: BoxShape.circle, color: dot),
           ),
           const SizedBox(width: 5),
           Text(
@@ -889,7 +931,10 @@ class _StatusBadge extends StatelessWidget {
               _ => status.toUpperCase(),
             },
             style: TextStyle(
-                fontSize: 11, fontWeight: FontWeight.w700, color: fg),
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: fg,
+            ),
           ),
         ],
       ),

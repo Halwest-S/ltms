@@ -7,43 +7,43 @@ class ShipmentCard extends StatelessWidget {
   final Shipment shipment;
   final VoidCallback onTap;
 
-  const ShipmentCard({
-    super.key,
-    required this.shipment,
-    required this.onTap,
-  });
+  const ShipmentCard({super.key, required this.shipment, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final s = shipment;
     final l10n = L10n.of(context);
 
-    final (Color statusBg, Color statusFg, Color statusDot, String statusLabel) =
-        switch (s.status) {
+    final (
+      Color statusBg,
+      Color statusFg,
+      Color statusDot,
+      String statusLabel,
+    ) = switch (s.status) {
       ShipmentStatus.pending => (
-          AppTheme.amberLight,
-          const Color(0xFF92400E),
-          AppTheme.amber,
-          (l10n?.pending ?? 'Pending').toUpperCase()
-        ),
+        AppTheme.amberLight,
+        const Color(0xFF92400E),
+        AppTheme.amber,
+        (l10n?.pending ?? 'Pending').toUpperCase(),
+      ),
       ShipmentStatus.inTransit => (
-          AppTheme.blueLight,
-          const Color(0xFF1D4ED8),
-          AppTheme.blue,
-          (l10n?.inTransit ?? 'In Transit').toUpperCase()
-        ),
+        AppTheme.blueLight,
+        const Color(0xFF1D4ED8),
+        AppTheme.blue,
+        (l10n?.inTransit ?? 'In Transit').toUpperCase(),
+      ),
       ShipmentStatus.delivered => (
-          AppTheme.tealLight,
-          const Color(0xFF065F46),
-          AppTheme.teal,
-          (l10n?.delivered ?? 'Delivered').toUpperCase()
-        ),
+        AppTheme.tealLight,
+        const Color(0xFF065F46),
+        AppTheme.teal,
+        (l10n?.delivered ?? 'Delivered').toUpperCase(),
+      ),
       ShipmentStatus.reported => (
-          AppTheme.redLight,
-          const Color(0xFF991B1B),
-          AppTheme.red,
-          (l10n?.reported ?? 'Reported').toUpperCase()
-        ),
+        AppTheme.redLight,
+        const Color(0xFF991B1B),
+        AppTheme.red,
+        (l10n?.reported ?? 'Reported').toUpperCase(),
+      ),
     };
 
     final String transportIcon = switch (s.status) {
@@ -52,6 +52,11 @@ class ShipmentCard extends StatelessWidget {
       ShipmentStatus.delivered => '\u{2705}', // Check ✅
       ShipmentStatus.reported => '\u{26A0}', // Warning ⚠️
     };
+
+    final productTitle = s.productTitle?.trim();
+    final routeText =
+        l10n?.routeArrow(s.origin, s.destination) ??
+        '${s.origin} \u{2192} ${s.destination}';
 
     return GestureDetector(
       onTap: onTap,
@@ -75,7 +80,10 @@ class ShipmentCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
-                    child: Text(transportIcon, style: const TextStyle(fontSize: 20)),
+                    child: Text(
+                      transportIcon,
+                      style: const TextStyle(fontSize: 20),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -84,7 +92,9 @@ class ShipmentCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${s.origin} \u{2192} ${s.destination}',
+                        productTitle == null || productTitle.isEmpty
+                            ? routeText
+                            : productTitle,
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w800,
@@ -94,7 +104,9 @@ class ShipmentCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        '#${s.id.substring(0, 8).toUpperCase()}',
+                        productTitle == null || productTitle.isEmpty
+                            ? '#${s.id.substring(0, 8).toUpperCase()}'
+                            : routeText,
                         style: const TextStyle(
                           fontSize: 11,
                           color: AppTheme.muted,
@@ -106,7 +118,10 @@ class ShipmentCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: statusBg,
                     borderRadius: BorderRadius.circular(100),
@@ -152,7 +167,8 @@ class ShipmentCard extends StatelessWidget {
                 _infoChip(
                   context,
                   icon: Icons.schedule_rounded,
-                  label: '${s.estimatedDeliveryDays} ${L10n.of(context)?.days ?? 'days'}',
+                  label:
+                      '${s.estimatedDeliveryDays} ${L10n.of(context)?.days ?? 'days'}',
                 ),
                 const Spacer(),
                 Text(
@@ -173,7 +189,11 @@ class ShipmentCard extends StatelessWidget {
     );
   }
 
-  Widget _infoChip(BuildContext context, {required IconData icon, required String label}) {
+  Widget _infoChip(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+  }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

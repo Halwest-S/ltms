@@ -93,6 +93,10 @@ class ApiClient {
 
   Future<Response> createShipment(Map<String, dynamic> data) =>
       _dio.post('/api/v1/shipments', data: data);
+  Future<Response> previewProductLink(String url) =>
+      _dio.post('/api/v1/product-links/preview', data: {'url': url});
+  Future<Response> getTransportOptions() =>
+      _dio.get('/api/v1/transport-options');
   Future<Response> getShipmentDetail(String id) =>
       _dio.get('/api/v1/shipments/$id');
   Future<Response> updateShipmentStatus(String id, String status) =>

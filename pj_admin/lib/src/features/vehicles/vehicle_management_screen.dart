@@ -27,10 +27,7 @@ class VehicleManagementScreen extends ConsumerWidget {
     final vehiclesAsync = ref.watch(adminVehicleTypesProvider);
 
     Future<void> openEditor([Map<String, dynamic>? vehicle]) async {
-      final result = await VehicleEditorDialog.show(
-        context,
-        vehicle: vehicle,
-      );
+      final result = await VehicleEditorDialog.show(context, vehicle: vehicle);
       if (result == true) {
         ref.invalidate(adminVehicleTypesProvider);
       }
@@ -153,6 +150,11 @@ class VehicleManagementScreen extends ConsumerWidget {
                                         AppTheme.blueLight,
                                         const Color(0xFF1D4ED8),
                                       ),
+                                      _chip(
+                                        _methodLabel(context, vehicle),
+                                        const Color(0xFFF3F4F6),
+                                        AppTheme.ink,
+                                      ),
                                       TextButton.icon(
                                         onPressed: () => openEditor(vehicle),
                                         icon: const Icon(
@@ -219,6 +221,12 @@ class VehicleManagementScreen extends ConsumerWidget {
                                     const Color(0xFF1D4ED8),
                                   ),
                                   const SizedBox(width: 8),
+                                  _chip(
+                                    _methodLabel(context, vehicle),
+                                    const Color(0xFFF3F4F6),
+                                    AppTheme.ink,
+                                  ),
+                                  const SizedBox(width: 8),
                                   OutlinedButton.icon(
                                     onPressed: () => openEditor(vehicle),
                                     icon: const Icon(
@@ -246,9 +254,8 @@ class VehicleManagementScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) => Center(
-                  child: Text('${l10n.error}: $error'),
-                ),
+                error: (error, _) =>
+                    Center(child: Text('${l10n.error}: $error')),
               ),
             ),
           ],
@@ -269,6 +276,15 @@ class VehicleManagementScreen extends ConsumerWidget {
     if (name.contains('motor')) return '🏍️';
     if (name.contains('air') || name.contains('plane')) return '✈️';
     return '🚗';
+  }
+
+  String _methodLabel(BuildContext context, Map<String, dynamic> vehicle) {
+    final method = '${vehicle['transport_method'] ?? 'ground'}';
+    return switch (method) {
+      'air' => _screenText(context, ku: 'هەوایی', en: 'Air'),
+      'sea' => _screenText(context, ku: 'دەریایی', en: 'Sea'),
+      _ => _screenText(context, ku: 'وشکانی', en: 'Land'),
+    };
   }
 
   Widget _chip(String label, Color bg, Color fg) {
@@ -321,10 +337,7 @@ class VehicleManagementScreen extends ConsumerWidget {
     return error.toString();
   }
 
-  Future<bool> _confirmDelete(
-    BuildContext context,
-    String title,
-  ) async {
+  Future<bool> _confirmDelete(BuildContext context, String title) async {
     final l10n = L10n.of(context)!;
     final result = await showDialog<bool>(
       context: context,
@@ -398,7 +411,9 @@ class VehicleManagementScreen extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          SnackBar(content: Text('${l10n.error}: ${_extractErrorMessage(error)}')),
+          SnackBar(
+            content: Text('${l10n.error}: ${_extractErrorMessage(error)}'),
+          ),
         );
     }
   }

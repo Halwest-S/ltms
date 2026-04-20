@@ -106,7 +106,7 @@ abstract class L10n {
   /// No description provided for @appSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Logistics & Transportation Management'**
+  /// **'Kurdistan Import Logistics Management'**
   String get appSubtitle;
 
   /// No description provided for @login.
@@ -190,19 +190,19 @@ abstract class L10n {
   /// No description provided for @shipments.
   ///
   /// In en, this message translates to:
-  /// **'Shipments'**
+  /// **'Imports'**
   String get shipments;
 
   /// No description provided for @myShipments.
   ///
   /// In en, this message translates to:
-  /// **'My Shipments'**
+  /// **'My Imports'**
   String get myShipments;
 
   /// No description provided for @assignedShipments.
   ///
   /// In en, this message translates to:
-  /// **'Assigned Shipments'**
+  /// **'Assigned Imports'**
   String get assignedShipments;
 
   /// No description provided for @reports.
@@ -220,13 +220,13 @@ abstract class L10n {
   /// No description provided for @shipmentsCount.
   ///
   /// In en, this message translates to:
-  /// **'{count} shipments'**
+  /// **'{count} imports'**
   String shipmentsCount(int count);
 
   /// No description provided for @shipmentCount.
   ///
   /// In en, this message translates to:
-  /// **'{count} shipment'**
+  /// **'{count} import'**
   String shipmentCount(int count);
 
   /// No description provided for @users.
@@ -418,7 +418,7 @@ abstract class L10n {
   /// No description provided for @route.
   ///
   /// In en, this message translates to:
-  /// **'ROUTE'**
+  /// **'IMPORT ROUTE'**
   String get route;
 
   /// No description provided for @orderPlaced.
@@ -460,25 +460,25 @@ abstract class L10n {
   /// No description provided for @newShipment.
   ///
   /// In en, this message translates to:
-  /// **'New Shipment'**
+  /// **'New Import'**
   String get newShipment;
 
   /// No description provided for @createShipment.
   ///
   /// In en, this message translates to:
-  /// **'Create Shipment'**
+  /// **'Create Import Request'**
   String get createShipment;
 
   /// No description provided for @origin.
   ///
   /// In en, this message translates to:
-  /// **'Origin'**
+  /// **'Source'**
   String get origin;
 
   /// No description provided for @destination.
   ///
   /// In en, this message translates to:
-  /// **'Destination'**
+  /// **'Kurdistan Delivery'**
   String get destination;
 
   /// No description provided for @weight.
@@ -520,13 +520,13 @@ abstract class L10n {
   /// No description provided for @shipmentDetails.
   ///
   /// In en, this message translates to:
-  /// **'Shipment Details'**
+  /// **'Import Details'**
   String get shipmentDetails;
 
   /// No description provided for @shipmentStatus.
   ///
   /// In en, this message translates to:
-  /// **'Status'**
+  /// **'Import Status'**
   String get shipmentStatus;
 
   /// No description provided for @priceBreakdown.
@@ -538,7 +538,7 @@ abstract class L10n {
   /// No description provided for @trackShipment.
   ///
   /// In en, this message translates to:
-  /// **'Track Shipment'**
+  /// **'Track Import'**
   String get trackShipment;
 
   /// No description provided for @pending.
@@ -610,7 +610,7 @@ abstract class L10n {
   /// No description provided for @searchPlaceholder.
   ///
   /// In en, this message translates to:
-  /// **'Search shipments...'**
+  /// **'Search imports...'**
   String get searchPlaceholder;
 
   /// No description provided for @filter.
@@ -1114,25 +1114,25 @@ abstract class L10n {
   /// No description provided for @newShipmentBtn.
   ///
   /// In en, this message translates to:
-  /// **'+ New Shipment'**
+  /// **'+ New Import'**
   String get newShipmentBtn;
 
   /// No description provided for @noShipmentsYet.
   ///
   /// In en, this message translates to:
-  /// **'No shipments yet'**
+  /// **'No import requests yet'**
   String get noShipmentsYet;
 
   /// No description provided for @createFirstShipment.
   ///
   /// In en, this message translates to:
-  /// **'Create your first shipment above'**
+  /// **'Create your first import request above'**
   String get createFirstShipment;
 
   /// No description provided for @recentShipments.
   ///
   /// In en, this message translates to:
-  /// **'RECENT SHIPMENTS'**
+  /// **'RECENT IMPORTS'**
   String get recentShipments;
 
   /// No description provided for @helpAndFaq.
@@ -1174,7 +1174,7 @@ abstract class L10n {
   /// No description provided for @receiveAlerts.
   ///
   /// In en, this message translates to:
-  /// **'Receive alerts for your shipments'**
+  /// **'Receive alerts for your imports'**
   String get receiveAlerts;
 
   /// No description provided for @helpFaqLink.
@@ -1192,7 +1192,7 @@ abstract class L10n {
   /// No description provided for @updatesFromShipments.
   ///
   /// In en, this message translates to:
-  /// **'Updates from your shipments'**
+  /// **'Updates from your imports'**
   String get updatesFromShipments;
 
   /// No description provided for @noNotificationsYet.
@@ -1210,7 +1210,7 @@ abstract class L10n {
   /// No description provided for @shipmentUpdate.
   ///
   /// In en, this message translates to:
-  /// **'Shipment Update'**
+  /// **'Import Update'**
   String get shipmentUpdate;
 
   /// No description provided for @reportUpdate.
@@ -1252,13 +1252,13 @@ abstract class L10n {
   /// No description provided for @confirmDeliveryQuestion.
   ///
   /// In en, this message translates to:
-  /// **'Has your shipment been delivered successfully?'**
+  /// **'Have your imported goods been delivered successfully?'**
   String get confirmDeliveryQuestion;
 
   /// No description provided for @deliveredSuccessfully.
   ///
   /// In en, this message translates to:
-  /// **'Shipment delivered successfully.'**
+  /// **'Imported goods delivered successfully.'**
   String get deliveredSuccessfully;
 
   /// No description provided for @myAssignments.
@@ -1288,13 +1288,13 @@ abstract class L10n {
   /// No description provided for @systemOverview.
   ///
   /// In en, this message translates to:
-  /// **'System-wide shipment overview'**
+  /// **'System-wide import overview'**
   String get systemOverview;
 
   /// No description provided for @signInToManage.
   ///
   /// In en, this message translates to:
-  /// **'Sign in to manage your shipments'**
+  /// **'Sign in to manage imports'**
   String get signInToManage;
 
   /// No description provided for @dontHaveAccount.
@@ -1354,7 +1354,7 @@ abstract class L10n {
   /// No description provided for @failedToLoadShipments.
   ///
   /// In en, this message translates to:
-  /// **'Failed to load shipments'**
+  /// **'Failed to load imports'**
   String get failedToLoadShipments;
 
   /// No description provided for @failedToLoad.
@@ -1372,7 +1372,7 @@ abstract class L10n {
   /// No description provided for @noShipmentsFilter.
   ///
   /// In en, this message translates to:
-  /// **'No shipments'**
+  /// **'No imports'**
   String get noShipmentsFilter;
 
   /// No description provided for @catalogLabel.
@@ -1420,13 +1420,13 @@ abstract class L10n {
   /// No description provided for @shipmentMonitor.
   ///
   /// In en, this message translates to:
-  /// **'Shipment Monitor'**
+  /// **'Import Monitor'**
   String get shipmentMonitor;
 
   /// No description provided for @monitorSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Monitor and manage all shipments'**
+  /// **'Monitor goods imported to Kurdistan'**
   String get monitorSubtitle;
 
   /// No description provided for @driverLabel.
@@ -1468,7 +1468,7 @@ abstract class L10n {
   /// No description provided for @shipmentList.
   ///
   /// In en, this message translates to:
-  /// **'Shipment List'**
+  /// **'Import List'**
   String get shipmentList;
 
   /// No description provided for @incidentReports.
@@ -1600,7 +1600,7 @@ abstract class L10n {
   /// No description provided for @messageEnHint.
   ///
   /// In en, this message translates to:
-  /// **'e.g. Your shipment has arrived at Erbil hub and is ready for pickup.'**
+  /// **'e.g. Your imported goods have arrived at Erbil hub and are ready for pickup.'**
   String get messageEnHint;
 
   /// No description provided for @messageKuLabel.
@@ -1840,13 +1840,13 @@ abstract class L10n {
   /// No description provided for @splashTagline.
   ///
   /// In en, this message translates to:
-  /// **'Ship anything, anywhere.'**
+  /// **'Import goods to Kurdistan with confidence.'**
   String get splashTagline;
 
   /// No description provided for @splashSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'The smarter way to manage your logistics'**
+  /// **'The smarter way to manage import logistics'**
   String get splashSubtitle;
 
   /// No description provided for @getStarted.
@@ -1900,19 +1900,19 @@ abstract class L10n {
   /// No description provided for @whereIsItGoing.
   ///
   /// In en, this message translates to:
-  /// **'Where is it going?'**
+  /// **'Where in Kurdistan is it going?'**
   String get whereIsItGoing;
 
   /// No description provided for @enterOriginDestination.
   ///
   /// In en, this message translates to:
-  /// **'Enter origin and destination for your shipment.'**
+  /// **'Enter the supplier/source location and the Kurdistan delivery city.'**
   String get enterOriginDestination;
 
   /// No description provided for @whatAreSending.
   ///
   /// In en, this message translates to:
-  /// **'What are you sending?'**
+  /// **'What goods are you importing?'**
   String get whatAreSending;
 
   /// No description provided for @weightKg.
@@ -1942,19 +1942,19 @@ abstract class L10n {
   /// No description provided for @shipmentSummary.
   ///
   /// In en, this message translates to:
-  /// **'SHIPMENT SUMMARY'**
+  /// **'IMPORT SUMMARY'**
   String get shipmentSummary;
 
   /// No description provided for @confirmShipment.
   ///
   /// In en, this message translates to:
-  /// **'Confirm Shipment'**
+  /// **'Confirm Import Request'**
   String get confirmShipment;
 
   /// No description provided for @shipmentCreated.
   ///
   /// In en, this message translates to:
-  /// **'Shipment created! 🎉'**
+  /// **'Import request created! 🎉'**
   String get shipmentCreated;
 
   /// No description provided for @vehicleStep.
@@ -1966,7 +1966,7 @@ abstract class L10n {
   /// No description provided for @routeStep.
   ///
   /// In en, this message translates to:
-  /// **'Route'**
+  /// **'Import Route'**
   String get routeStep;
 
   /// No description provided for @detailsStep.
@@ -2068,7 +2068,7 @@ abstract class L10n {
   /// No description provided for @signInToDeliveries.
   ///
   /// In en, this message translates to:
-  /// **'Sign in to manage your deliveries'**
+  /// **'Sign in to manage import deliveries'**
   String get signInToDeliveries;
 
   /// No description provided for @loginFailed.
@@ -2164,7 +2164,7 @@ abstract class L10n {
   /// No description provided for @createAccountSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Ship smarter — track your first order in minutes'**
+  /// **'Import smarter - track your first order in minutes'**
   String get createAccountSubtitle;
 
   /// No description provided for @signInToStaffPortal.
@@ -2188,7 +2188,7 @@ abstract class L10n {
   /// No description provided for @shipmentLabel.
   ///
   /// In en, this message translates to:
-  /// **'SHIPMENT'**
+  /// **'IMPORT'**
   String get shipmentLabel;
 
   /// No description provided for @describeProblem.
@@ -2200,7 +2200,7 @@ abstract class L10n {
   /// No description provided for @teamWillReview.
   ///
   /// In en, this message translates to:
-  /// **'Our team will review your report and respond within 24–48 hours.'**
+  /// **'Our team will review your report and respond within 24-48 hours.'**
   String get teamWillReview;
 
   /// No description provided for @reportAnIssue.
@@ -2218,25 +2218,25 @@ abstract class L10n {
   /// No description provided for @originCity.
   ///
   /// In en, this message translates to:
-  /// **'📍 ORIGIN CITY'**
+  /// **'📍 SOURCE CITY / COUNTRY'**
   String get originCity;
 
   /// No description provided for @destinationCity.
   ///
   /// In en, this message translates to:
-  /// **'🏁 DESTINATION CITY'**
+  /// **'🏁 KURDISTAN DELIVERY CITY'**
   String get destinationCity;
 
   /// No description provided for @originHint.
   ///
   /// In en, this message translates to:
-  /// **'e.g. Erbil'**
+  /// **'e.g. Istanbul, Dubai, Guangzhou'**
   String get originHint;
 
   /// No description provided for @destinationHint.
   ///
   /// In en, this message translates to:
-  /// **'e.g. Istanbul'**
+  /// **'e.g. Erbil, Sulaimani, Duhok'**
   String get destinationHint;
 
   /// No description provided for @newUnread.
@@ -2326,13 +2326,13 @@ abstract class L10n {
   /// No description provided for @noShipmentsFound.
   ///
   /// In en, this message translates to:
-  /// **'No shipments found'**
+  /// **'No imports found'**
   String get noShipmentsFound;
 
   /// No description provided for @errorLoadingShipments.
   ///
   /// In en, this message translates to:
-  /// **'Error loading shipments'**
+  /// **'Error loading imports'**
   String get errorLoadingShipments;
 
   /// No description provided for @errorLoading.
@@ -2446,13 +2446,13 @@ abstract class L10n {
   /// No description provided for @confirmShipmentButton.
   ///
   /// In en, this message translates to:
-  /// **'Confirm Shipment'**
+  /// **'Confirm Import Request'**
   String get confirmShipmentButton;
 
   /// No description provided for @shipmentCreatedSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Shipment created!'**
+  /// **'Import request created!'**
   String get shipmentCreatedSuccess;
 
   /// No description provided for @shipmentCreatedError.
@@ -2464,7 +2464,7 @@ abstract class L10n {
   /// No description provided for @newShipmentButton.
   ///
   /// In en, this message translates to:
-  /// **'+ New Shipment'**
+  /// **'+ New Import'**
   String get newShipmentButton;
 
   /// No description provided for @helpFaq.
@@ -2598,6 +2598,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'LTMS Staff'**
   String get staffSidebar;
+
+  /// No description provided for @originOutsideKurdistanRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Source must be outside Kurdistan for an import request.'**
+  String get originOutsideKurdistanRequired;
+
+  /// No description provided for @destinationKurdistanRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination must be a delivery city in Kurdistan.'**
+  String get destinationKurdistanRequired;
 
   /// No description provided for @lengthLabel.
   ///

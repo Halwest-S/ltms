@@ -89,7 +89,7 @@ class ShipmentDetailScreen extends ConsumerWidget {
                           if (isCompact)
                             Column(
                               children: [
-                                _infoColumn(l10n.origin, 'بەغدا، عێراق'),
+                                _infoColumn(l10n.origin, 'Istanbul, Turkey'),
                                 const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 12),
                                   child: Icon(
@@ -97,7 +97,10 @@ class ShipmentDetailScreen extends ConsumerWidget {
                                     color: AppTheme.muted,
                                   ),
                                 ),
-                                _infoColumn(l10n.destination, 'هەولێر، عێراق'),
+                                _infoColumn(
+                                  l10n.destination,
+                                  'Erbil, Kurdistan',
+                                ),
                               ],
                             )
                           else
@@ -106,7 +109,7 @@ class ShipmentDetailScreen extends ConsumerWidget {
                                 Expanded(
                                   child: _infoColumn(
                                     l10n.origin,
-                                    'بەغدا، عێراق',
+                                    'Istanbul, Turkey',
                                   ),
                                 ),
                                 const Padding(
@@ -119,7 +122,7 @@ class ShipmentDetailScreen extends ConsumerWidget {
                                 Expanded(
                                   child: _infoColumn(
                                     l10n.destination,
-                                    'هەولێر، عێراق',
+                                    'Erbil, Kurdistan',
                                   ),
                                 ),
                               ],
@@ -136,8 +139,8 @@ class ShipmentDetailScreen extends ConsumerWidget {
                             child: Column(
                               children: [
                                 _detailRow(l10n.weight, l10n.kgUnit('25')),
-                                _detailRow(l10n.category, 'بەڵگەنامەکان'),
-                                _detailRow(l10n.vehicleType, 'ڤان'),
+                                _detailRow(l10n.category, 'Electronics'),
+                                _detailRow(l10n.vehicleType, 'Van'),
                                 _detailRow(
                                   l10n.estimatedDelivery,
                                   '3 ${l10n.days}',
@@ -152,7 +155,7 @@ class ShipmentDetailScreen extends ConsumerWidget {
                               children: [
                                 _detailRow(l10n.nameLabel, 'Ahmed Ali'),
                                 _detailRow(l10n.email, 'ahmed@example.com'),
-                                _detailRow('مۆبایل', '+964 750 123 4567'),
+                                _detailRow('Phone', '+964 750 123 4567'),
                               ],
                             ),
                           ),
@@ -168,8 +171,8 @@ class ShipmentDetailScreen extends ConsumerWidget {
                               child: Column(
                                 children: [
                                   _detailRow(l10n.weight, l10n.kgUnit('25')),
-                                  _detailRow(l10n.category, 'بەڵگەنامەکان'),
-                                  _detailRow(l10n.vehicleType, 'ڤان'),
+                                  _detailRow(l10n.category, 'Electronics'),
+                                  _detailRow(l10n.vehicleType, 'Van'),
                                   _detailRow(
                                     l10n.estimatedDelivery,
                                     '3 ${l10n.days}',
@@ -186,7 +189,7 @@ class ShipmentDetailScreen extends ConsumerWidget {
                                 children: [
                                   _detailRow(l10n.nameLabel, 'Ahmed Ali'),
                                   _detailRow(l10n.email, 'ahmed@example.com'),
-                                  _detailRow('مۆبایل', '+964 750 123 4567'),
+                                  _detailRow('Phone', '+964 750 123 4567'),
                                 ],
                               ),
                             ),

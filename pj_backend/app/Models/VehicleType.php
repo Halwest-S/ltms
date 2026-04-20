@@ -10,6 +10,8 @@ class VehicleType extends Model
     protected $fillable = [
         'name_en',
         'name_ku',
+        'transport_method',
+        'icon',
         'multiplier',
         'delivery_days_offset',
     ];

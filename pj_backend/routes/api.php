@@ -19,6 +19,8 @@ Route::prefix('v1')->group(function () {
         Route::patch('/auth/password', [AuthController::class, 'changePassword']);
 
         // Shipments
+        Route::post('/product-links/preview', [ShipmentController::class, 'previewProductLink']);
+        Route::get('/transport-options', [ShipmentController::class, 'transportOptions']);
         Route::get('/shipments', [ShipmentController::class, 'index']);
         Route::post('/shipments', [ShipmentController::class, 'store']);
         Route::get('/shipments/{id}', [ShipmentController::class, 'show']);

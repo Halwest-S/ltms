@@ -159,7 +159,10 @@ class _ShipmentHistoryScreenState extends ConsumerState<ShipmentHistoryScreen> {
                             color: AppTheme.muted,
                           ),
                           const SizedBox(height: 10),
-                          Text(l10n.noDeliveriesYet, style: textTheme.titleMedium),
+                          Text(
+                            l10n.noDeliveriesYet,
+                            style: textTheme.titleMedium,
+                          ),
                           const SizedBox(height: 4),
                           Text(l10n.history, style: textTheme.bodySmall),
                         ],
@@ -167,7 +170,8 @@ class _ShipmentHistoryScreenState extends ConsumerState<ShipmentHistoryScreen> {
                     );
                   }
                   return RefreshIndicator(
-                    onRefresh: () => ref.refresh(shipmentHistoryProvider.future),
+                    onRefresh: () =>
+                        ref.refresh(shipmentHistoryProvider.future),
                     child: ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       itemCount: shipments.length,
@@ -175,7 +179,8 @@ class _ShipmentHistoryScreenState extends ConsumerState<ShipmentHistoryScreen> {
                       itemBuilder: (context, index) {
                         final shipment = shipments[index];
                         return GestureDetector(
-                          onTap: () => context.push('/shipments/${shipment.id}'),
+                          onTap: () =>
+                              context.push('/shipments/${shipment.id}'),
                           child: Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
@@ -192,10 +197,14 @@ class _ShipmentHistoryScreenState extends ConsumerState<ShipmentHistoryScreen> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '${shipment.origin} -> ${shipment.destination}',
+                                        l10n.routeArrow(
+                                          shipment.origin,
+                                          shipment.destination,
+                                        ),
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w700,

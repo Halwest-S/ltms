@@ -22,17 +22,20 @@ class VehicleEditorDialog extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<VehicleEditorDialog> createState() => _VehicleEditorDialogState();
+  ConsumerState<VehicleEditorDialog> createState() =>
+      _VehicleEditorDialogState();
 }
 
 class _VehicleEditorDialogState extends ConsumerState<VehicleEditorDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameEnCtrl = TextEditingController();
   final _nameKuCtrl = TextEditingController();
+  final _iconCtrl = TextEditingController();
   final _multiplierCtrl = TextEditingController();
   final _deliveryDaysCtrl = TextEditingController();
 
   bool _isSaving = false;
+  String _transportMethod = 'ground';
 
   bool get _isEditing => widget.vehicle != null;
 
@@ -50,6 +53,8 @@ class _VehicleEditorDialogState extends ConsumerState<VehicleEditorDialog> {
     if (vehicle != null) {
       _nameEnCtrl.text = '${vehicle['name_en'] ?? ''}';
       _nameKuCtrl.text = '${vehicle['name_ku'] ?? ''}';
+      _iconCtrl.text = '${vehicle['icon'] ?? ''}';
+      _transportMethod = '${vehicle['transport_method'] ?? 'ground'}';
       _multiplierCtrl.text = _formatNumber(vehicle['multiplier']);
       _deliveryDaysCtrl.text = '${vehicle['delivery_days_offset'] ?? ''}';
     }
@@ -59,6 +64,7 @@ class _VehicleEditorDialogState extends ConsumerState<VehicleEditorDialog> {
   void dispose() {
     _nameEnCtrl.dispose();
     _nameKuCtrl.dispose();
+    _iconCtrl.dispose();
     _multiplierCtrl.dispose();
     _deliveryDaysCtrl.dispose();
     super.dispose();
@@ -88,10 +94,7 @@ class _VehicleEditorDialogState extends ConsumerState<VehicleEditorDialog> {
     return int.tryParse(normalized);
   }
 
-  String _screenText({
-    required String ku,
-    required String en,
-  }) {
+  String _screenText({required String ku, required String en}) {
     return L10n.of(context)!.localeName == 'ku' ? ku : en;
   }
 
@@ -139,12 +142,16 @@ class _VehicleEditorDialogState extends ConsumerState<VehicleEditorDialog> {
       final payload = {
         'name_en': _nameEnCtrl.text.trim(),
         'name_ku': _nameKuCtrl.text.trim(),
+        'transport_method': _transportMethod,
+        'icon': _iconCtrl.text.trim().isEmpty ? null : _iconCtrl.text.trim(),
         'multiplier': multiplier,
         'delivery_days_offset': deliveryDaysOffset,
       };
 
       if (_isEditing) {
-        await ref.read(apiClientProvider).updateAdminVehicle(vehicleId!, payload);
+        await ref
+            .read(apiClientProvider)
+            .updateAdminVehicle(vehicleId!, payload);
       } else {
         await ref.read(apiClientProvider).createAdminVehicle(payload);
       }
@@ -165,7 +172,9 @@ class _VehicleEditorDialogState extends ConsumerState<VehicleEditorDialog> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          SnackBar(content: Text('${l10n.error}: ${_extractErrorMessage(error)}')),
+          SnackBar(
+            content: Text('${l10n.error}: ${_extractErrorMessage(error)}'),
+          ),
         );
     } finally {
       if (mounted) {
@@ -193,8 +202,9 @@ class _VehicleEditorDialogState extends ConsumerState<VehicleEditorDialog> {
                   decoration: InputDecoration(
                     labelText: '${l10n.english} (${l10n.nameLabel})',
                   ),
-                  validator: (value) =>
-                      value == null || value.trim().isEmpty ? l10n.required : null,
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? l10n.required
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -202,8 +212,45 @@ class _VehicleEditorDialogState extends ConsumerState<VehicleEditorDialog> {
                   decoration: InputDecoration(
                     labelText: '${l10n.kurdish} (${l10n.nameLabel})',
                   ),
-                  validator: (value) =>
-                      value == null || value.trim().isEmpty ? l10n.required : null,
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? l10n.required
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  initialValue: _transportMethod,
+                  decoration: InputDecoration(
+                    labelText: _screenText(
+                      ku: 'شێوازی گواستنەوە',
+                      en: 'Transport method',
+                    ),
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: 'ground',
+                      child: Text(_screenText(ku: 'وشکانی', en: 'Land')),
+                    ),
+                    DropdownMenuItem(
+                      value: 'air',
+                      child: Text(_screenText(ku: 'هەوایی', en: 'Air')),
+                    ),
+                    DropdownMenuItem(
+                      value: 'sea',
+                      child: Text(_screenText(ku: 'دەریایی', en: 'Sea')),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() => _transportMethod = value);
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _iconCtrl,
+                  decoration: InputDecoration(
+                    labelText: _screenText(ku: 'هێما', en: 'Icon'),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(

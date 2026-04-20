@@ -6,17 +6,22 @@ use App\Http\Requests\StoreShipmentRequest;
 use App\Models\Notification;
 use App\Models\Shipment;
 use App\Models\User;
+use App\Models\VehicleType;
 use App\Services\PricingService;
+use App\Services\ProductLinkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ShipmentController extends Controller
 {
-    protected $pricingService;
+    protected PricingService $pricingService;
 
-    public function __construct(PricingService $pricingService)
+    protected ProductLinkService $productLinkService;
+
+    public function __construct(PricingService $pricingService, ProductLinkService $productLinkService)
     {
         $this->pricingService = $pricingService;
+        $this->productLinkService = $productLinkService;
     }
     public function index(Request $request)
     {
@@ -43,7 +48,10 @@ class ShipmentController extends Controller
             $query->where(function ($q) use ($like) {
                 $q->whereRaw('LOWER(CAST(id AS TEXT)) LIKE ?', [$like])
                   ->orWhereRaw('LOWER(origin) LIKE ?', [$like])
-                  ->orWhereRaw('LOWER(destination) LIKE ?', [$like]);
+                  ->orWhereRaw('LOWER(destination) LIKE ?', [$like])
+                  ->orWhereRaw('LOWER(product_platform) LIKE ?', [$like])
+                  ->orWhereRaw('LOWER(product_title) LIKE ?', [$like])
+                  ->orWhereRaw('LOWER(product_url) LIKE ?', [$like]);
             });
         }
 
@@ -53,6 +61,7 @@ class ShipmentController extends Controller
     public function store(StoreShipmentRequest $request)
     {
         return DB::transaction(function () use ($request) {
+            $product = $this->productLinkService->preview($request->product_url);
             $pricingResult = $this->pricingService->calculate(
                 $request->category_id,
                 $request->vehicle_type_id,
@@ -64,6 +73,20 @@ class ShipmentController extends Controller
                 'customer_id' => $request->user()->id,
                 'origin' => $request->origin,
                 'destination' => $request->destination,
+                'product_platform' => $product['platform'],
+                'product_url' => $product['url'],
+                'product_external_id' => $product['external_id'],
+                'product_title' => $request->product_title ?: $product['title'],
+                'product_image_url' => $request->product_image_url ?: $product['image_url'],
+                'product_price' => $request->filled('product_price')
+                    ? $request->product_price
+                    : $product['price'],
+                'product_color' => $request->product_color,
+                'product_size' => $request->product_size,
+                'product_metadata' => [
+                    'platform_label' => $product['platform_label'],
+                    'preview_title' => $product['title'],
+                ],
                 'transit_countries' => $request->transit_countries,
                 'weight_kg' => $request->weight_kg,
                 'size' => $request->size,
@@ -77,8 +100,8 @@ class ShipmentController extends Controller
 
             Notification::create([
                 'user_id' => $shipment->customer_id,
-                'message_en' => 'Your shipment has been created and is currently pending.',
-                'message_ku' => 'بارەکەت دروستکرا و لە ئێستادا چاوەڕوانە.',
+                'message_en' => 'Your import request has been created and is currently pending.',
+                'message_ku' => 'داواکاری هاوردەکەت دروستکرا و لە ئێستادا چاوەڕوانە.',
                 'type' => 'status_update',
                 'is_read' => false,
             ]);
@@ -178,8 +201,8 @@ class ShipmentController extends Controller
 
         Notification::create([
             'user_id' => $request->driver_id,
-            'message_en' => 'A new shipment has been assigned to you: #'.substr($shipment->id, 0, 8),
-            'message_ku' => 'بارێکی نوێ پێسپێردراوە: #'.substr($shipment->id, 0, 8),
+            'message_en' => 'A new import delivery has been assigned to you: #'.substr($shipment->id, 0, 8),
+            'message_ku' => 'گەیاندنی هاوردەیەکی نوێت پێسپێردرا: #'.substr($shipment->id, 0, 8),
             'type' => 'assignment',
             'is_read' => false,
             'shipment_id' => $shipment->id,
@@ -195,6 +218,27 @@ class ShipmentController extends Controller
             ->get(['id', 'name', 'email', 'phone_number']);
 
         return response()->json($drivers);
+    }
+
+    public function previewProductLink(Request $request)
+    {
+        $request->validate([
+            'url' => 'required|string|max:2048',
+        ]);
+
+        return response()->json(
+            $this->productLinkService->preview((string) $request->input('url'))
+        );
+    }
+
+    public function transportOptions()
+    {
+        return response()->json(
+            VehicleType::query()
+                ->orderByRaw("CASE transport_method WHEN 'air' THEN 1 WHEN 'ground' THEN 2 WHEN 'sea' THEN 3 ELSE 4 END")
+                ->orderBy('name_en')
+                ->get()
+        );
     }
 
     public function calculatePreview(Request $request)

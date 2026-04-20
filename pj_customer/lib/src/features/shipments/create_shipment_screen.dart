@@ -1,48 +1,153 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pj_l10n/pj_l10n.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../core/api_provider.dart';
 import '../../core/theme.dart';
 import 'shipment_provider.dart';
-import 'package:pj_l10n/pj_l10n.dart';
 
 class CreateShipmentScreen extends ConsumerStatefulWidget {
   const CreateShipmentScreen({super.key});
 
   @override
-  ConsumerState<CreateShipmentScreen> createState() => _CreateShipmentScreenState();
+  ConsumerState<CreateShipmentScreen> createState() =>
+      _CreateShipmentScreenState();
 }
 
 class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
-  final _originCtrl = TextEditingController();
-  final _destCtrl = TextEditingController();
+  final _productUrlCtrl = TextEditingController();
+  final _destinationCtrl = TextEditingController();
+  final _colorCtrl = TextEditingController();
+  final _productSizeCtrl = TextEditingController();
   final _weightCtrl = TextEditingController();
-  final _lenCtrl = TextEditingController();
-  final _widCtrl = TextEditingController();
-  final _hgtCtrl = TextEditingController();
+  final _lengthCtrl = TextEditingController();
+  final _widthCtrl = TextEditingController();
+  final _heightCtrl = TextEditingController();
 
-  int _categoryId = 3;
-  int _vehicleTypeId = 3;
   int _step = 0;
-  bool _isLoading = false;
+  int _categoryId = 3;
+  int? _vehicleTypeId;
+  bool _isLoadingProduct = false;
+  bool _isLoadingTransport = false;
   bool _isLoadingPricing = false;
+  bool _isSubmitting = false;
+  Map<String, dynamic>? _productPreview;
   Map<String, dynamic>? _pricing;
+  List<_TransportOption> _transportOptions = const [];
+
+  static const _platforms = [
+    _Marketplace(
+      id: 'amazon',
+      name: 'Amazon',
+      url: 'https://www.amazon.com/',
+      icon: Icons.shopping_bag_outlined,
+    ),
+    _Marketplace(
+      id: 'alibaba',
+      name: 'Alibaba',
+      url: 'https://www.alibaba.com/',
+      icon: Icons.storefront_outlined,
+    ),
+  ];
 
   static const _categories = [
     (1, 'General'),
     (2, 'Fragile'),
     (3, 'Electronics'),
   ];
-  static const _vehicles = [
-    (3, '\u{1F69B}', 'Truck', '+2 days · High capacity', '×1.5', 'ground'), // Truck 🚚
-    (4, '\u{2708}\u{FE0F}', 'Airplane', '-2 days · Express', '×2.5', 'air'), // Airplane ✈️
-    (8, '\u{1F6A2}', 'Ship', '+10 days · Sea freight', '×0.8', 'sea'), // Ship 🚢
+
+  static const _fallbackTransportOptions = [
+    _TransportOption(
+      id: 4,
+      nameEn: 'Airplane',
+      nameKu: 'فڕۆکە',
+      transportMethod: 'air',
+      multiplier: 2.5,
+      deliveryDaysOffset: -2,
+    ),
+    _TransportOption(
+      id: 3,
+      nameEn: 'Truck',
+      nameKu: 'باری هەڵگر',
+      transportMethod: 'ground',
+      multiplier: 1.5,
+      deliveryDaysOffset: 2,
+    ),
+    _TransportOption(
+      id: 8,
+      nameEn: 'Ship',
+      nameKu: 'کەشتی',
+      transportMethod: 'sea',
+      multiplier: 0.8,
+      deliveryDaysOffset: 10,
+    ),
   ];
+
+  static const _kurdistanDestinationKeywords = [
+    'kurdistan',
+    'erbil',
+    'hawler',
+    'hewler',
+    'sulaimani',
+    'sulaymaniyah',
+    'slemani',
+    'silemani',
+    'duhok',
+    'dohuk',
+    'zakho',
+    'zaxo',
+    'halabja',
+    'kirkuk',
+    'kerkuk',
+    'koya',
+    'akre',
+    'aqra',
+    'ranya',
+    'shaqlawa',
+    'chamchamal',
+    'kalar',
+    'کوردستان',
+    'هەولێر',
+    'سلێمانی',
+    'دهۆک',
+    'دهوك',
+    'زاخۆ',
+    'هەڵەبجە',
+    'کەرکووک',
+    'کۆیە',
+    'ئاکرێ',
+    'ڕانیە',
+    'شقڵاوە',
+    'چەمچەماڵ',
+    'کەلار',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTransportOptions();
+  }
+
+  @override
+  void dispose() {
+    _productUrlCtrl.dispose();
+    _destinationCtrl.dispose();
+    _colorCtrl.dispose();
+    _productSizeCtrl.dispose();
+    _weightCtrl.dispose();
+    _lengthCtrl.dispose();
+    _widthCtrl.dispose();
+    _heightCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context)!;
     final tt = Theme.of(context).textTheme;
+
     return PopScope(
       canPop: _step == 0,
       onPopInvokedWithResult: (didPop, _) {
@@ -61,373 +166,1248 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
               }
             },
           ),
-          title: Text(L10n.of(context)!.newShipment),
+          title: Text(l10n.newShipment),
         ),
-      body: Column(
+        body: Column(
+          children: [
+            _buildStepIndicator(),
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                child: [
+                  _buildProductStep,
+                  _buildDestinationStep,
+                  _buildSpecsStep,
+                  _buildShippingStep,
+                  _buildReviewStep,
+                ][_step](tt),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStepIndicator() {
+    final labels = [
+      _t(ku: 'بەرهەم', en: 'Product'),
+      _t(ku: 'گەیاندن', en: 'Delivery'),
+      _t(ku: 'وردەکاری', en: 'Specs'),
+      _t(ku: 'گواستنەوە', en: 'Shipping'),
+      _t(ku: 'پێداچوونەوە', en: 'Review'),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(18, 8, 18, 10),
+      child: Column(
         children: [
-          // Step Indicator
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
-            child: Column(children: [
-              Row(children: List.generate(4, (i) => Expanded(child: Container(
-                height: 4, margin: EdgeInsets.only(right: i < 3 ? 5 : 0),
-                decoration: BoxDecoration(
-                  color: i < _step ? AppTheme.teal : i == _step ? AppTheme.ink : AppTheme.border,
-                  borderRadius: BorderRadius.circular(2),
+          Row(
+            children: List.generate(labels.length, (index) {
+              return Expanded(
+                child: Container(
+                  height: 4,
+                  margin: EdgeInsetsDirectional.only(
+                    end: index < labels.length - 1 ? 5 : 0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: index < _step
+                        ? AppTheme.teal
+                        : index == _step
+                        ? AppTheme.ink
+                        : AppTheme.border,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
-              )))),
-              const SizedBox(height: 6),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                for (final (i, label) in [l10n.vehicleStep, l10n.routeStep, l10n.detailsStep, l10n.reviewStep].indexed)
-                  Text(label, style: TextStyle(fontSize: 11, fontWeight: i <= _step ? FontWeight.w600 : FontWeight.w500, color: i == _step ? AppTheme.ink : AppTheme.muted)),
-              ]),
-            ]),
+              );
+            }),
           ),
           const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              for (final (index, label) in labels.indexed)
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: index <= _step
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                      color: index == _step ? AppTheme.ink : AppTheme.muted,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-          // Content
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              child: [_buildVehicleStep, _buildRouteStep, _buildDetailsStep, _buildReviewStep][_step](tt),
+  Widget _screen({required int keyValue, required Widget child}) {
+    return SingleChildScrollView(
+      key: ValueKey(keyValue),
+      padding: const EdgeInsets.fromLTRB(18, 10, 18, 24),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 760),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductStep(TextTheme tt) {
+    return _screen(
+      keyValue: 0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            _t(
+              ku: 'بەرهەمەکەت لە سەرچاوەی دەرەوە هەڵبژێرە',
+              en: 'Choose the product externally',
+            ),
+            style: tt.displaySmall,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _t(
+              ku: 'ماڵپەڕی ئەمازۆن یان عەلی‌بابا لە دەرەوە دەکرێتەوە؛ دواتر لینکی بەرهەمەکە لێرە دابنێ.',
+              en: 'Amazon or Alibaba opens outside LTMS; paste the product link here when you return.',
+            ),
+            style: tt.bodyMedium?.copyWith(color: AppTheme.muted),
+          ),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth >= 600;
+              final cards = _platforms.map(_platformCard).toList();
+
+              if (!isWide) {
+                return Column(
+                  children: [
+                    for (final card in cards) ...[
+                      card,
+                      if (card != cards.last) const SizedBox(height: 10),
+                    ],
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  for (final card in cards) ...[
+                    Expanded(child: card),
+                    if (card != cards.last) const SizedBox(width: 12),
+                  ],
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 18),
+          _sectionCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  _t(ku: 'لینکی بەرهەم', en: 'Product link'),
+                  style: tt.labelLarge,
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _productUrlCtrl,
+                  keyboardType: TextInputType.url,
+                  textDirection: TextDirection.ltr,
+                  decoration: InputDecoration(
+                    hintText: 'https://www.amazon.com/.../dp/...',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.verified_outlined),
+                      tooltip: _t(ku: 'پشتڕاستکردنەوە', en: 'Validate'),
+                      onPressed: _isLoadingProduct ? null : _previewProductLink,
+                    ),
+                  ),
+                  onSubmitted: (_) => _previewProductLink(),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: _isLoadingProduct ? null : _previewProductLink,
+                  icon: _isLoadingProduct
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.check_circle_outline),
+                  label: Text(
+                    _t(ku: 'پشتڕاستکردنەوەی لینک', en: 'Validate Link'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (_productPreview != null) ...[
+            const SizedBox(height: 12),
+            _productPreviewCard(tt),
+          ],
+          const SizedBox(height: 18),
+          ElevatedButton(
+            onPressed: _productPreview == null
+                ? null
+                : () => setState(() => _step = 1),
+            child: Text(_t(ku: 'بەردەوامبوون', en: 'Continue')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _platformCard(_Marketplace platform) {
+    final isDetected = _productPreview?['platform'] == platform.id;
+
+    return _sectionCard(
+      borderColor: isDetected ? AppTheme.teal : AppTheme.border,
+      backgroundColor: isDetected ? AppTheme.tealLight : AppTheme.card,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(platform.icon, color: AppTheme.ink, size: 28),
+          const SizedBox(height: 10),
+          Text(platform.name, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () => _openMarketplace(platform),
+            icon: const Icon(Icons.open_in_new),
+            label: Text(
+              _t(ku: 'کردنەوەی ماڵپەڕ', en: 'Open Official Site'),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
       ),
-    ));
-  }
-
-  // ── Step 0: Vehicle ──
-  Widget _buildVehicleStep(TextTheme tt) {
-    final l10n = L10n.of(context)!;
-    return SingleChildScrollView(
-      key: const ValueKey(0),
-      padding: const EdgeInsets.all(18),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(l10n.chooseTransport, style: tt.displaySmall),
-        const SizedBox(height: 14),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTransportSection(l10n.groundTransport, 'ground', tt),
-            const SizedBox(height: 20),
-            _buildTransportSection(l10n.airTransport, 'air', tt),
-            const SizedBox(height: 20),
-            _buildTransportSection(l10n.seaTransport, 'sea', tt),
-          ],
-        ),
-        const SizedBox(height: 16),
-        ElevatedButton(onPressed: () => setState(() => _step = 1), child: Text(l10n.continueBtn)),
-      ]),
     );
   }
 
-  // ── Step 1: Route ──
-  Widget _buildRouteStep(TextTheme tt) {
-    final l10n = L10n.of(context)!;
-    return SingleChildScrollView(
-      key: const ValueKey(1),
-      padding: const EdgeInsets.all(18),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(l10n.whereIsItGoing, style: tt.displaySmall),
-        const SizedBox(height: 4),
-        Text(l10n.enterOriginDestination, style: tt.bodyMedium?.copyWith(color: AppTheme.muted)),
-        const SizedBox(height: 20),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(color: AppTheme.card, borderRadius: BorderRadius.circular(18), border: Border.all(color: AppTheme.border)),
-          child: Column(children: [
-            _labeledField(l10n.originCity, _originCtrl, l10n.originHint),
-            const Divider(height: 20),
-            _labeledField(l10n.destinationCity, _destCtrl, l10n.destinationHint),
-          ]),
-        ),
-        const SizedBox(height: 24),
-        ElevatedButton(onPressed: () => setState(() => _step = 2), child: Text(l10n.continueBtn)),
-        const SizedBox(height: 8),
-        OutlinedButton(onPressed: () => setState(() => _step = 0), child: Text(l10n.backBtn)),
-      ]),
-    );
-  }
+  Widget _productPreviewCard(TextTheme tt) {
+    final platform =
+        _productPreview?['platform_label']?.toString() ??
+        _productPreview?['platform']?.toString() ??
+        '';
+    final title = _productPreview?['title']?.toString();
+    final externalId = _productPreview?['external_id']?.toString();
 
-  // ── Step 2: Details ──
-  Widget _buildDetailsStep(TextTheme tt) {
-    final l10n = L10n.of(context)!;
-    final vehicle = _vehicles.firstWhere((v) => v.$1 == _vehicleTypeId, orElse: () => _vehicles.first);
-    final isAir = vehicle.$6 == 'air';
-    return SingleChildScrollView(
-      key: const ValueKey(2),
-      padding: const EdgeInsets.all(18),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(l10n.whatAreSending, style: tt.displaySmall),
-        const SizedBox(height: 16),
-        if (isAir) ...[
-          Text(l10n.weightKg, style: tt.labelLarge),
-          const SizedBox(height: 5),
-          TextField(controller: _weightCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(hintText: l10n.weightPlaceholder)),
-        ] else ...[
-          Text(l10n.dimensionsCm, style: tt.labelLarge),
-          const SizedBox(height: 5),
-          Row(
-            children: [
-              Expanded(child: TextField(controller: _lenCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(hintText: l10n.lengthLabel, filled: false))),
-              const SizedBox(width: 10),
-              Expanded(child: TextField(controller: _widCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(hintText: l10n.widthLabel, filled: false))),
-              const SizedBox(width: 10),
-              Expanded(child: TextField(controller: _hgtCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(hintText: l10n.heightLabel, filled: false))),
-            ],
+    return _sectionCard(
+      borderColor: AppTheme.teal,
+      backgroundColor: AppTheme.tealLight,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.verified, color: AppTheme.teal),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _t(ku: 'لینکەکە پشتڕاست کرایەوە', en: 'Link validated'),
+                  style: tt.titleMedium?.copyWith(color: AppTheme.teal),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  [
+                    platform,
+                    if (externalId != null && externalId.isNotEmpty)
+                      '#$externalId',
+                  ].join(' '),
+                  style: tt.bodySmall,
+                ),
+                if (title != null && title.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: tt.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
-        const SizedBox(height: 14),
-        Text(l10n.category, style: tt.labelLarge),
-        const SizedBox(height: 6),
-        Wrap(spacing: 7, runSpacing: 7, children: _categories.map((e) {
-          final (id, label) = e;
-          final localizedLabel = id == 1 ? l10n.categoryGeneral : id == 2 ? l10n.categoryFragile : l10n.categoryElectronics;
-          final sel = _categoryId == id;
-          return GestureDetector(
-            onTap: () => setState(() => _categoryId = id),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
-              decoration: BoxDecoration(
-                color: sel ? AppTheme.ink : null,
-                borderRadius: BorderRadius.circular(100),
-                border: Border.all(color: sel ? AppTheme.ink : AppTheme.border, width: 1.5),
-              ),
-              child: Text(localizedLabel, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: sel ? Colors.white : AppTheme.muted)),
+      ),
+    );
+  }
+
+  Widget _buildDestinationStep(TextTheme tt) {
+    final cityChips = [
+      (_t(ku: 'هەولێر', en: 'Erbil'), 'Erbil, Kurdistan'),
+      (_t(ku: 'دهۆک', en: 'Duhok'), 'Duhok, Kurdistan'),
+      (_t(ku: 'سلێمانی', en: 'Sulaimaniyah'), 'Sulaimaniyah, Kurdistan'),
+    ];
+
+    return _screen(
+      keyValue: 1,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            _t(
+              ku: 'شوێنی گەیاندن لە کوردستان',
+              en: 'Delivery inside Kurdistan',
             ),
-          );
-        }).toList()),
-        const SizedBox(height: 24),
-        ElevatedButton(
-          onPressed: _isLoadingPricing ? null : () async {
-            setState(() => _isLoadingPricing = true);
-            final errorMsg = await _calculatePricing();
-            setState(() => _isLoadingPricing = false);
-            if (errorMsg == null) {
-              setState(() => _step = 3);
-            } else {
-              if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
-            }
-          }, 
-          child: _isLoadingPricing ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : Text(l10n.continueBtn),
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton(onPressed: () => setState(() => _step = 1), child: Text(l10n.backBtn)),
-      ]),
-    );
-  }
-
-  // ── Step 3: Review ──
-  Widget _buildReviewStep(TextTheme tt) {
-    final l10n = L10n.of(context)!;
-    final vehicle = _vehicles.firstWhere((v) => v.$1 == _vehicleTypeId, orElse: () => _vehicles.first);
-    final isAir = vehicle.$6 == 'air';
-    return SingleChildScrollView(
-      key: const ValueKey(3),
-      padding: const EdgeInsets.all(18),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        // Price Box
-        Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [AppTheme.ink, Color(0xFF2D2F4A)]),
-            borderRadius: BorderRadius.circular(20),
+            style: tt.displaySmall,
           ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(l10n.estimatedTotal, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, letterSpacing: 0.7, color: Colors.white.withAlpha(153))),
-            const SizedBox(height: 4),
-            Text('\$${_pricing != null ? (double.tryParse(_pricing!['total_price'].toString()) ?? 0.0).toStringAsFixed(2) : '---'}', style: const TextStyle(fontFamily: 'InstrumentSerif', fontStyle: FontStyle.italic, fontSize: 36, color: Color(0xFFA7F3D0))),
-            const SizedBox(height: 6),
-            Text(l10n.estimatedDeliveryDays(_pricing?['estimated_delivery_days'] ?? 5), style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(153))),
-          ]),
-        ),
-        const SizedBox(height: 12),
-
-        // Summary
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(color: AppTheme.card, borderRadius: BorderRadius.circular(18), border: Border.all(color: AppTheme.border)),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(l10n.shipmentSummary, style: tt.labelLarge?.copyWith(color: AppTheme.muted, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 8),
-            _brRow(l10n.routeStep, '${_originCtrl.text} \u{2192} ${_destCtrl.text}'), // Arrow →
-            if (isAir) _brRow(l10n.weightRow, '${_weightCtrl.text} kg') else _brRow(l10n.dimensionsRow, '${_lenCtrl.text} x ${_widCtrl.text} x ${_hgtCtrl.text} cm'),
-            _brRow(l10n.category, _getLocalizedCategory(l10n, _categoryId)),
-            _brRow(l10n.vehicleStep, _getLocalizedVehicleName(l10n, _vehicleTypeId)),
-          ]),
-        ),
-        const SizedBox(height: 16),
-
-        // Submit
-        ElevatedButton(
-          onPressed: _isLoading ? null : _submit,
-          style: ElevatedButton.styleFrom(backgroundColor: AppTheme.teal, minimumSize: const Size(double.infinity, 56), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18))),
-          child: _isLoading
-            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
-            : Text(l10n.confirmShipment),
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton(onPressed: () => setState(() => _step = 2), child: Text(l10n.backBtn)),
-      ]),
+          const SizedBox(height: 6),
+          Text(
+            _t(
+              ku: 'هاوردەکان بۆ شاری ناو هەرێمی کوردستان تۆمار دەکرێن.',
+              en: 'Imports are registered for delivery cities in the Kurdistan Region.',
+            ),
+            style: tt.bodyMedium?.copyWith(color: AppTheme.muted),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final (label, value) in cityChips)
+                ChoiceChip(
+                  selected: _destinationCtrl.text == value,
+                  label: Text(label),
+                  onSelected: (_) =>
+                      setState(() => _destinationCtrl.text = value),
+                  selectedColor: AppTheme.tealLight,
+                  side: const BorderSide(color: AppTheme.border),
+                ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          TextField(
+            controller: _destinationCtrl,
+            decoration: InputDecoration(
+              labelText: _t(ku: 'شاری گەیاندن', en: 'Delivery city'),
+              hintText: _t(
+                ku: 'نموونە: هەولێر، کوردستان',
+                en: 'Example: Erbil, Kurdistan',
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          ElevatedButton(
+            onPressed: () {
+              if (_validateDestination()) {
+                setState(() => _step = 2);
+              }
+            },
+            child: Text(_t(ku: 'بەردەوامبوون', en: 'Continue')),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton(
+            onPressed: () => setState(() => _step = 0),
+            child: Text(_t(ku: 'گەڕانەوە', en: 'Back')),
+          ),
+        ],
+      ),
     );
   }
 
-  String _getLocalizedCategory(L10n l10n, int id) {
-    return switch (id) {
-      1 => l10n.categoryGeneral,
-      2 => l10n.categoryFragile,
-      3 => l10n.categoryElectronics,
-      _ => l10n.categoryGeneral,
-    };
+  Widget _buildSpecsStep(TextTheme tt) {
+    return _screen(
+      keyValue: 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            _t(ku: 'وردەکاری بەرهەم', en: 'Product specifications'),
+            style: tt.displaySmall,
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _colorCtrl,
+            decoration: InputDecoration(
+              labelText: _t(ku: 'ڕەنگ', en: 'Color'),
+              hintText: _t(ku: 'نموونە: ڕەش', en: 'Example: Black'),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _productSizeCtrl,
+            decoration: InputDecoration(
+              labelText: _t(ku: 'قەبارە', en: 'Size'),
+              hintText: _t(
+                ku: 'نموونە: M، 42، 256GB',
+                en: 'Example: M, 42, 256GB',
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            _t(ku: 'جۆری بەرهەم', en: 'Product category'),
+            style: tt.labelLarge,
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final (id, _) in _categories)
+                ChoiceChip(
+                  selected: _categoryId == id,
+                  label: Text(_categoryName(id)),
+                  onSelected: (_) => setState(() => _categoryId = id),
+                  selectedColor: AppTheme.tealLight,
+                  side: const BorderSide(color: AppTheme.border),
+                ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          _sectionCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  _t(
+                    ku: 'قەبارە و کێشی پاکێج',
+                    en: 'Package weight and dimensions',
+                  ),
+                  style: tt.labelLarge,
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _weightCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: _t(ku: 'کێش بە کیلۆگرام', en: 'Weight in kg'),
+                    hintText: '2.5',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _dimensionField(
+                        _lengthCtrl,
+                        _t(ku: 'درێژی', en: 'Length'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _dimensionField(
+                        _widthCtrl,
+                        _t(ku: 'پانی', en: 'Width'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _dimensionField(
+                        _heightCtrl,
+                        _t(ku: 'بەرزی', en: 'Height'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 18),
+          ElevatedButton(
+            onPressed: () {
+              if (_validateSpecs()) {
+                setState(() => _step = 3);
+              }
+            },
+            child: Text(_t(ku: 'بەردەوامبوون', en: 'Continue')),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton(
+            onPressed: () => setState(() => _step = 1),
+            child: Text(_t(ku: 'گەڕانەوە', en: 'Back')),
+          ),
+        ],
+      ),
+    );
   }
 
-  String _getLocalizedVehicleName(L10n l10n, int id) {
-    return switch (id) {
-      3 => l10n.transportTruck,
-      4 => l10n.transportAirplane,
-      8 => l10n.transportShip,
-      _ => L10n.of(context)!.vehicleType,
-    };
+  Widget _dimensionField(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(labelText: label, hintText: 'cm'),
+    );
   }
 
-  String _getLocalizedVehicleMeta(L10n l10n, int id) {
-    return switch (id) {
-      3 => l10n.transportTruckMeta,
-      4 => l10n.transportAirplaneMeta,
-      8 => l10n.transportShipMeta,
-      _ => '',
-    };
+  Widget _buildShippingStep(TextTheme tt) {
+    final options = _transportOptions.isEmpty
+        ? _fallbackTransportOptions
+        : _transportOptions;
+
+    return _screen(
+      keyValue: 3,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            _t(ku: 'شێوازی گواستنەوە', en: 'Shipping method'),
+            style: tt.displaySmall,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _t(
+              ku: 'هەوایی، وشکانی، یان دەریایی هەڵبژێرە؛ نرخ و کات بە پێی ئەم هەڵبژاردنە دەگۆڕێت.',
+              en: 'Choose air, land, or sea; cost and delivery time are calculated from this option.',
+            ),
+            style: tt.bodyMedium?.copyWith(color: AppTheme.muted),
+          ),
+          const SizedBox(height: 16),
+          if (_isLoadingTransport)
+            const Center(child: CircularProgressIndicator())
+          else
+            for (final option in options) ...[
+              _transportCard(option),
+              const SizedBox(height: 10),
+            ],
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: _isLoadingPricing ? null : _continueToReview,
+            child: _isLoadingPricing
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.4,
+                      color: Colors.white,
+                    ),
+                  )
+                : Text(_t(ku: 'ژماردنی نرخ', en: 'Calculate Cost')),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton(
+            onPressed: () => setState(() => _step = 2),
+            child: Text(_t(ku: 'گەڕانەوە', en: 'Back')),
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget _labeledField(String label, TextEditingController ctrl, String hint) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(label, style: Theme.of(context).textTheme.labelLarge),
-      const SizedBox(height: 5),
-      TextField(controller: ctrl, decoration: InputDecoration(hintText: hint, border: InputBorder.none, filled: false)),
-    ],
-  );
+  Widget _transportCard(_TransportOption option) {
+    final selected = _vehicleTypeId == option.id;
+    final days = option.estimatedDays.clamp(1, 60);
 
-  Widget _brRow(String key, String val) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 7),
-    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text(key, style: const TextStyle(color: AppTheme.muted, fontWeight: FontWeight.w500, fontSize: 13)),
-      Flexible(child: Text(val, style: const TextStyle(fontWeight: FontWeight.w700, color: AppTheme.ink, fontSize: 13), textAlign: TextAlign.end)),
-    ]),
-  );
+    return InkWell(
+      onTap: () => setState(() {
+        _vehicleTypeId = option.id;
+        _pricing = null;
+      }),
+      borderRadius: BorderRadius.circular(12),
+      child: _sectionCard(
+        borderColor: selected ? AppTheme.ink : AppTheme.border,
+        backgroundColor: selected ? const Color(0xFFF7F7F5) : AppTheme.card,
+        child: Row(
+          children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: AppTheme.tealLight,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                _transportIcon(option.transportMethod),
+                color: AppTheme.teal,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    option.displayName(isKurdish: _isKurdish),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.ink,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    '${_methodLabel(option.transportMethod)} • ${_t(ku: '$days ڕۆژ', en: '$days days')}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.muted,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: selected ? AppTheme.ink : AppTheme.tealLight,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                _formatMultiplier(option.multiplier),
+                style: TextStyle(
+                  color: selected ? Colors.white : AppTheme.teal,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-  Future<String?> _calculatePricing() async {
-    final vehicle = _vehicles.firstWhere((v) => v.$1 == _vehicleTypeId, orElse: () => _vehicles.first);
-    final isAir = vehicle.$6 == 'air';
-    double? w;
-    String? s;
-    if (isAir) {
-      final cleanWeight = _weightCtrl.text.replaceAll(RegExp(r'[^0-9.]'), '');
-      w = double.tryParse(cleanWeight) ?? 0;
-      if (w <= 0) return L10n.of(context)!.validWeightError;
-      _weightCtrl.text = cleanWeight;
-    } else {
-      final l = double.tryParse(_lenCtrl.text.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
-      final wd = double.tryParse(_widCtrl.text.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
-      final h = double.tryParse(_hgtCtrl.text.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
-      if (l <= 0 || wd <= 0 || h <= 0) return L10n.of(context)!.validDimensionsError;
-      s = '${l}x${wd}x$h';
-      
-      _lenCtrl.text = l.toStringAsFixed(0);
-      _widCtrl.text = wd.toStringAsFixed(0);
-      _hgtCtrl.text = h.toStringAsFixed(0);
-    }
+  Widget _buildReviewStep(TextTheme tt) {
+    final selectedTransport = _selectedTransport;
+    final totalPrice = _asDouble(_pricing?['total_price']);
+    final days = _pricing?['estimated_delivery_days']?.toString() ?? '-';
+
+    return _screen(
+      keyValue: 4,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: AppTheme.ink,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _t(ku: 'کۆی خەمڵێنراو', en: 'Estimated Total'),
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  totalPrice == null
+                      ? '--'
+                      : '\$${totalPrice.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    color: Color(0xFFA7F3D0),
+                    fontSize: 34,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  _t(
+                    ku: 'ماوەی گەیاندنی خەمڵێنراو: $days ڕۆژ',
+                    en: 'Estimated delivery: $days days',
+                  ),
+                  style: const TextStyle(color: Colors.white70),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          _sectionCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _t(
+                    ku: 'پوختەی داواکاری هاوردە',
+                    en: 'Import Request Summary',
+                  ),
+                  style: tt.titleMedium,
+                ),
+                const SizedBox(height: 10),
+                _summaryRow(_t(ku: 'سەرچاوە', en: 'Source'), _sourceOrigin),
+                _summaryRow(
+                  _t(ku: 'لینک', en: 'Link'),
+                  _productUrlCtrl.text.trim(),
+                ),
+                _summaryRow(
+                  _t(ku: 'گەیاندن', en: 'Delivery'),
+                  _destinationCtrl.text.trim(),
+                ),
+                _summaryRow(
+                  _t(ku: 'ڕەنگ', en: 'Color'),
+                  _colorCtrl.text.trim(),
+                ),
+                _summaryRow(
+                  _t(ku: 'قەبارە', en: 'Size'),
+                  _productSizeCtrl.text.trim(),
+                ),
+                _summaryRow(
+                  _t(ku: 'جۆر', en: 'Category'),
+                  _categoryName(_categoryId),
+                ),
+                if (selectedTransport != null)
+                  _summaryRow(
+                    _t(ku: 'گواستنەوە', en: 'Shipping'),
+                    '${selectedTransport.displayName(isKurdish: _isKurdish)} (${_methodLabel(selectedTransport.transportMethod)})',
+                  ),
+                _summaryRow(_t(ku: 'پاکێج', en: 'Package'), _packageSummary),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _isSubmitting ? null : _submit,
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.teal),
+            child: _isSubmitting
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.4,
+                      color: Colors.white,
+                    ),
+                  )
+                : Text(
+                    _t(
+                      ku: 'پشتڕاستکردنەوەی داواکاری هاوردە',
+                      en: 'Confirm Import Request',
+                    ),
+                  ),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton(
+            onPressed: () => setState(() => _step = 3),
+            child: Text(_t(ku: 'گەڕانەوە', en: 'Back')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionCard({
+    required Widget child,
+    Color borderColor = AppTheme.border,
+    Color backgroundColor = AppTheme.card,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: borderColor, width: 1.4),
+      ),
+      child: child,
+    );
+  }
+
+  Widget _summaryRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 7),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: AppTheme.muted,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value.isEmpty ? '-' : value,
+              textAlign: TextAlign.end,
+              style: const TextStyle(
+                color: AppTheme.ink,
+                fontWeight: FontWeight.w800,
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _loadTransportOptions() async {
+    setState(() => _isLoadingTransport = true);
 
     try {
-      final r = await ref.read(apiClientProvider).calculatePricing(
-        weight: w,
-        size: s,
-        categoryId: _categoryId,
-        vehicleTypeId: _vehicleTypeId,
-      );
-      setState(() {
-        _pricing = r.data;
-      });
-      return null;
-    } catch (e) {
-      debugPrint('Pricing calculation error: $e');
-      if (e.toString().contains('DioException [bad response]')) {
-         try {
-           final dioErr = e as dynamic;
-            return 'هەڵەی API ${dioErr.response?.statusCode}: ${dioErr.response?.data}';
-          } catch(_) {}
+      final response = await ref.read(apiClientProvider).getTransportOptions();
+      final data = response.data as List;
+      final options = data
+          .map(
+            (item) =>
+                _TransportOption.fromJson(Map<String, dynamic>.from(item)),
+          )
+          .toList();
+
+      if (!mounted) {
+        return;
       }
-      return 'هەڵەی API: $e';
+
+      setState(() {
+        _transportOptions = options.isEmpty
+            ? _fallbackTransportOptions
+            : options;
+        _vehicleTypeId = _transportOptions.first.id;
+      });
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _transportOptions = _fallbackTransportOptions;
+        _vehicleTypeId = _fallbackTransportOptions.first.id;
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingTransport = false);
+      }
+    }
+  }
+
+  Future<void> _openMarketplace(_Marketplace platform) async {
+    final opened = await launchUrl(
+      Uri.parse(platform.url),
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!opened && mounted) {
+      _showError(
+        _t(ku: 'ماڵپەڕەکە نەکرایەوە.', en: 'Could not open the official site.'),
+      );
+    }
+  }
+
+  Future<void> _previewProductLink() async {
+    final url = _productUrlCtrl.text.trim();
+
+    if (url.isEmpty) {
+      _showError(
+        _t(
+          ku: 'تکایە لینکی بەرهەم بنووسە.',
+          en: 'Please enter a product link.',
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoadingProduct = true;
+      _productPreview = null;
+    });
+
+    try {
+      final response = await ref
+          .read(apiClientProvider)
+          .previewProductLink(url);
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _productPreview = Map<String, dynamic>.from(response.data);
+        _productUrlCtrl.text = _productPreview?['url']?.toString() ?? url;
+      });
+    } catch (error) {
+      if (mounted) {
+        _showError(_extractApiMessage(error));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingProduct = false);
+      }
+    }
+  }
+
+  bool _validateDestination() {
+    final destination = _destinationCtrl.text.trim();
+
+    if (destination.isEmpty) {
+      _showError(
+        _t(ku: 'شاری گەیاندن پێویستە.', en: 'Delivery city is required.'),
+      );
+      return false;
+    }
+
+    if (!_isKurdistanLocation(destination)) {
+      _showError(
+        _t(
+          ku: 'شاری گەیاندن دەبێت لە هەرێمی کوردستان بێت.',
+          en: 'Delivery city must be inside the Kurdistan Region.',
+        ),
+      );
+      return false;
+    }
+
+    _destinationCtrl.text = destination;
+    return true;
+  }
+
+  bool _validateSpecs() {
+    if (_colorCtrl.text.trim().isEmpty) {
+      _showError(
+        _t(ku: 'ڕەنگی بەرهەم پێویستە.', en: 'Product color is required.'),
+      );
+      return false;
+    }
+
+    if (_productSizeCtrl.text.trim().isEmpty) {
+      _showError(
+        _t(ku: 'قەبارەی بەرهەم پێویستە.', en: 'Product size is required.'),
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<void> _continueToReview() async {
+    if (_vehicleTypeId == null) {
+      _showError(
+        _t(ku: 'شێوازی گواستنەوە هەڵبژێرە.', en: 'Choose a shipping method.'),
+      );
+      return;
+    }
+
+    final selectedTransport = _selectedTransport;
+    if (selectedTransport == null) {
+      return;
+    }
+
+    final cargo = _cargoPayloadFor(selectedTransport);
+    if (cargo.error != null) {
+      _showError(cargo.error!);
+      return;
+    }
+
+    setState(() => _isLoadingPricing = true);
+
+    try {
+      final response = await ref
+          .read(apiClientProvider)
+          .calculatePricing(
+            weight: cargo.weight,
+            size: cargo.size,
+            categoryId: _categoryId,
+            vehicleTypeId: selectedTransport.id,
+          );
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _pricing = Map<String, dynamic>.from(response.data);
+        _step = 4;
+      });
+    } catch (error) {
+      if (mounted) {
+        _showError(_extractApiMessage(error));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingPricing = false);
+      }
     }
   }
 
   Future<void> _submit() async {
-    setState(() => _isLoading = true);
-    final vehicle = _vehicles.firstWhere((v) => v.$1 == _vehicleTypeId, orElse: () => _vehicles.first);
-    final isAir = vehicle.$6 == 'air';
+    final selectedTransport = _selectedTransport;
+    if (_productPreview == null || selectedTransport == null) {
+      _showError(
+        _t(ku: 'داواکارییەکە تەواو نییە.', en: 'The request is incomplete.'),
+      );
+      return;
+    }
+
+    final cargo = _cargoPayloadFor(selectedTransport);
+    if (cargo.error != null) {
+      _showError(cargo.error!);
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
     try {
-      final l = double.tryParse(_lenCtrl.text) ?? 0;
-      final w = double.tryParse(_widCtrl.text) ?? 0;
-      final h = double.tryParse(_hgtCtrl.text) ?? 0;
       await ref.read(apiClientProvider).createShipment({
-        'origin': _originCtrl.text, 'destination': _destCtrl.text,
-        if (isAir) 'weight_kg': double.tryParse(_weightCtrl.text) ?? 0,
-        if (!isAir) 'size': '${l}x${w}x$h',
-        'category_id': _categoryId, 'vehicle_type_id': _vehicleTypeId,
+        'origin': _sourceOrigin,
+        'destination': _destinationCtrl.text.trim(),
+        'product_url': _productUrlCtrl.text.trim(),
+        'product_platform': _productPreview?['platform'],
+        'product_title': _productPreview?['title'],
+        'product_image_url': _productPreview?['image_url'],
+        'product_price': _productPreview?['price'],
+        'product_color': _colorCtrl.text.trim(),
+        'product_size': _productSizeCtrl.text.trim(),
+        if (cargo.weight != null) 'weight_kg': cargo.weight,
+        if (cargo.size != null) 'size': cargo.size,
+        'category_id': _categoryId,
+        'vehicle_type_id': selectedTransport.id,
       });
+
       ref.invalidate(customerShipmentsProvider);
-      if (mounted) { context.go('/'); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(L10n.of(context)!.shipmentCreated))); }
-    } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${L10n.of(context)!.error}: $e')));
+
+      if (mounted) {
+        context.go('/');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _t(
+                ku: 'داواکاری هاوردەکە تۆمار کرا.',
+                en: 'Import request created.',
+              ),
+            ),
+          ),
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        _showError(_extractApiMessage(error));
+      }
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
-  Widget _buildTransportSection(String title, String method, TextTheme tt) {
-    final filteredVehicles = _vehicles.where((v) => v.$6 == method).toList();
-    if (filteredVehicles.isEmpty) return const SizedBox.shrink();
+  _CargoPayload _cargoPayloadFor(_TransportOption transport) {
+    if (transport.transportMethod == 'air') {
+      final weight = _parsePositiveNumber(_weightCtrl.text);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: tt.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 10),
-        ...List.generate(filteredVehicles.length, (i) {
-          final vehicle = filteredVehicles[i];
-          final (id, icon, name, meta, mult, _) = vehicle;
-          final sel = _vehicleTypeId == id;
+      if (weight == null) {
+        return _CargoPayload(
+          error: _t(
+            ku: 'بۆ گواستنەوەی هەوایی کێشی پاکێج پێویستە.',
+            en: 'Package weight is required for air shipping.',
+          ),
+        );
+      }
 
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: GestureDetector(
-              onTap: () => setState(() => _vehicleTypeId = id),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                decoration: BoxDecoration(
-                  color: sel ? const Color(0xFFF7F7F5) : AppTheme.card,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: sel ? AppTheme.ink : AppTheme.border, width: 1.5),
-                ),
-                child: Row(children: [
-                  Text(icon, style: const TextStyle(fontSize: 24)),
-                  const SizedBox(width: 12),
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(_getLocalizedVehicleName(L10n.of(context)!, id), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.ink)),
-                    Text(_getLocalizedVehicleMeta(L10n.of(context)!, id), style: const TextStyle(fontSize: 11, color: AppTheme.muted)),
-                  ])),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(color: AppTheme.tealLight, borderRadius: BorderRadius.circular(6)),
-                    child: Text(mult, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppTheme.teal)),
-                  ),
-                ]),
-              ),
-            ),
-          );
-        }),
-      ],
+      return _CargoPayload(weight: weight);
+    }
+
+    final length = _parsePositiveNumber(_lengthCtrl.text);
+    final width = _parsePositiveNumber(_widthCtrl.text);
+    final height = _parsePositiveNumber(_heightCtrl.text);
+
+    if (length == null || width == null || height == null) {
+      return _CargoPayload(
+        error: _t(
+          ku: 'بۆ گواستنەوەی وشکانی یان دەریایی قەبارەی پاکێج پێویستە.',
+          en: 'Package dimensions are required for land or sea shipping.',
+        ),
+      );
+    }
+
+    return _CargoPayload(
+      size:
+          '${_trimNumber(length)}x${_trimNumber(width)}x${_trimNumber(height)}',
     );
   }
+
+  bool _isKurdistanLocation(String value) {
+    final normalized = value.toLowerCase();
+    return _kurdistanDestinationKeywords.any(
+      (keyword) => normalized.contains(keyword.toLowerCase()),
+    );
+  }
+
+  String _categoryName(int id) {
+    return switch (id) {
+      1 => _t(ku: 'گشتی', en: 'General'),
+      2 => _t(ku: 'نازک', en: 'Fragile'),
+      3 => _t(ku: 'ئەلیکترۆنی', en: 'Electronics'),
+      _ => _t(ku: 'گشتی', en: 'General'),
+    };
+  }
+
+  String _methodLabel(String method) {
+    return switch (method) {
+      'air' => _t(ku: 'هەوایی', en: 'Air'),
+      'sea' => _t(ku: 'دەریایی', en: 'Sea'),
+      _ => _t(ku: 'وشکانی', en: 'Land'),
+    };
+  }
+
+  IconData _transportIcon(String method) {
+    return switch (method) {
+      'air' => Icons.flight_takeoff,
+      'sea' => Icons.directions_boat_filled_outlined,
+      _ => Icons.local_shipping_outlined,
+    };
+  }
+
+  String get _sourceOrigin {
+    final label = _productPreview?['platform_label']?.toString();
+    return '${label == null || label.isEmpty ? 'International' : label} marketplace';
+  }
+
+  String get _packageSummary {
+    final selectedTransport = _selectedTransport;
+    if (selectedTransport == null) {
+      return '-';
+    }
+
+    final cargo = _cargoPayloadFor(selectedTransport);
+    if (cargo.weight != null) {
+      return '${_trimNumber(cargo.weight!)} kg';
+    }
+
+    return cargo.size ?? '-';
+  }
+
+  _TransportOption? get _selectedTransport {
+    final options = _transportOptions.isEmpty
+        ? _fallbackTransportOptions
+        : _transportOptions;
+
+    if (_vehicleTypeId == null) {
+      return options.isEmpty ? null : options.first;
+    }
+
+    return options.cast<_TransportOption?>().firstWhere(
+      (option) => option?.id == _vehicleTypeId,
+      orElse: () => options.isEmpty ? null : options.first,
+    );
+  }
+
+  bool get _isKurdish => L10n.of(context)!.localeName == 'ku';
+
+  String _t({required String ku, required String en}) => _isKurdish ? ku : en;
+
+  String _formatMultiplier(double multiplier) {
+    final rounded = multiplier == multiplier.roundToDouble()
+        ? multiplier.toStringAsFixed(0)
+        : multiplier.toStringAsFixed(1);
+    return 'x$rounded';
+  }
+
+  String _trimNumber(double value) {
+    return value == value.roundToDouble()
+        ? value.toStringAsFixed(0)
+        : value.toStringAsFixed(2);
+  }
+
+  double? _parsePositiveNumber(String value) {
+    final parsed = double.tryParse(value.replaceAll(RegExp(r'[^0-9.]'), ''));
+    if (parsed == null || parsed <= 0) {
+      return null;
+    }
+    return parsed;
+  }
+
+  double? _asDouble(dynamic value) {
+    if (value is num) {
+      return value.toDouble();
+    }
+
+    return double.tryParse(value?.toString() ?? '');
+  }
+
+  String _extractApiMessage(Object error) {
+    try {
+      final dynamic dioError = error;
+      final data = dioError.response?.data;
+
+      if (data is Map) {
+        final errors = data['errors'];
+        if (errors is Map && errors.isNotEmpty) {
+          final first = errors.values.first;
+          if (first is List && first.isNotEmpty) {
+            return first.first.toString();
+          }
+        }
+
+        if (data['message'] != null) {
+          return data['message'].toString();
+        }
+      }
+    } catch (_) {
+      // Use the local fallback below.
+    }
+
+    return _t(
+      ku: 'هەڵەیەک ڕوویدا. تکایە دووبارە هەوڵ بدەوە.',
+      en: 'Something went wrong. Please try again.',
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+}
+
+class _Marketplace {
+  const _Marketplace({
+    required this.id,
+    required this.name,
+    required this.url,
+    required this.icon,
+  });
+
+  final String id;
+  final String name;
+  final String url;
+  final IconData icon;
+}
+
+class _TransportOption {
+  const _TransportOption({
+    required this.id,
+    required this.nameEn,
+    required this.nameKu,
+    required this.transportMethod,
+    required this.multiplier,
+    required this.deliveryDaysOffset,
+  });
+
+  factory _TransportOption.fromJson(Map<String, dynamic> json) {
+    return _TransportOption(
+      id: (json['id'] as num).toInt(),
+      nameEn: json['name_en']?.toString() ?? '',
+      nameKu: json['name_ku']?.toString() ?? '',
+      transportMethod: json['transport_method']?.toString() ?? 'ground',
+      multiplier: (json['multiplier'] as num?)?.toDouble() ?? 1.0,
+      deliveryDaysOffset: (json['delivery_days_offset'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  final int id;
+  final String nameEn;
+  final String nameKu;
+  final String transportMethod;
+  final double multiplier;
+  final int deliveryDaysOffset;
+
+  int get estimatedDays => 3 + deliveryDaysOffset;
+
+  String displayName({required bool isKurdish}) {
+    if (isKurdish && nameKu.trim().isNotEmpty) {
+      return nameKu;
+    }
+
+    return nameEn.trim().isEmpty ? 'Transport' : nameEn;
+  }
+}
+
+class _CargoPayload {
+  const _CargoPayload({this.weight, this.size, this.error});
+
+  final double? weight;
+  final String? size;
+  final String? error;
 }

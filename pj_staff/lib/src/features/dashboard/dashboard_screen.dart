@@ -336,9 +336,7 @@ class _StaffDashboardScreenState extends ConsumerState<StaffDashboardScreen> {
                                 DataColumn2(
                                   label: Text(l10n.route.toUpperCase()),
                                 ),
-                                DataColumn2(
-                                  label: Text(l10n.customerLabel),
-                                ),
+                                DataColumn2(label: Text(l10n.customerLabel)),
                                 DataColumn2(
                                   label: Text(
                                     l10n.weight.toUpperCase().split(' ')[0],
@@ -374,7 +372,10 @@ class _StaffDashboardScreenState extends ConsumerState<StaffDashboardScreen> {
                                     ),
                                     DataCell(
                                       Text(
-                                        '${s.origin} \u{2192} ${s.destination}',
+                                        l10n.routeArrow(
+                                          s.origin,
+                                          s.destination,
+                                        ),
                                       ),
                                     ),
                                     DataCell(
@@ -529,10 +530,7 @@ class _StaffDashboardScreenState extends ConsumerState<StaffDashboardScreen> {
             details,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 11,
-              color: AppTheme.muted,
-            ),
+            style: const TextStyle(fontSize: 11, color: AppTheme.muted),
           ),
       ],
     );

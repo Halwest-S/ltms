@@ -73,40 +73,46 @@ class LTMSSeeder extends Seeder
         Category::updateOrCreate([
             'name_en' => 'General',
         ], [
-            'name_ku' => 'Gashti',
+            'name_ku' => 'گشتی',
             'surcharge' => 0,
         ]);
         Category::updateOrCreate([
             'name_en' => 'Fragile',
         ], [
-            'name_ku' => 'Shkaw',
+            'name_ku' => 'شکاو',
             'surcharge' => 10.00,
         ]);
         Category::updateOrCreate([
             'name_en' => 'Electronics',
         ], [
-            'name_ku' => 'Elektroni',
+            'name_ku' => 'ئەلیکترۆنی',
             'surcharge' => 5.00,
         ]);
 
         VehicleType::updateOrCreate([
             'name_en' => 'Motorcycle',
         ], [
-            'name_ku' => 'Matorsikil',
+            'name_ku' => 'ماتۆڕسکڵ',
+            'transport_method' => 'ground',
+            'icon' => '🏍️',
             'multiplier' => 1.0,
             'delivery_days_offset' => 0,
         ]);
         VehicleType::updateOrCreate([
             'name_en' => 'Car',
         ], [
-            'name_ku' => 'Otomobil',
+            'name_ku' => 'ئۆتۆمبێل',
+            'transport_method' => 'ground',
+            'icon' => '🚗',
             'multiplier' => 1.2,
             'delivery_days_offset' => 1,
         ]);
         VehicleType::updateOrCreate([
             'name_en' => 'Truck',
         ], [
-            'name_ku' => 'Barhalgr',
+            'name_ku' => 'باری هەڵگر',
+            'transport_method' => 'ground',
+            'icon' => '🚛',
             'multiplier' => 1.5,
             'delivery_days_offset' => 2,
         ]);
@@ -114,10 +120,10 @@ class LTMSSeeder extends Seeder
         Faq::updateOrCreate([
             'sort_order' => 1,
         ], [
-            'question_en' => 'How do I track my shipment?',
+            'question_en' => 'How do I track my import?',
             'question_ku' => 'Chon barekam bedozmawa?',
-            'answer_en' => 'Open My Shipments in the app to see the current status.',
-            'answer_ku' => 'La appaka My Shipments bikawa bo binini doxi esta.',
+            'answer_en' => 'Open My Imports in the app to see the current status.',
+            'answer_ku' => 'لە ئەپەکە بەشی هاوردەکانم بکەرەوە بۆ بینینی دۆخی ئێستا.',
             'sort_order' => 1,
         ]);
 
@@ -129,10 +135,16 @@ class LTMSSeeder extends Seeder
         if ($customer && $driver && $general && $fragile && $car && $truck) {
             $shipmentOne = Shipment::updateOrCreate([
                 'customer_id' => $customer->id,
-                'origin' => 'Erbil Warehouse',
-                'destination' => 'Duhok Market',
+                'origin' => 'Istanbul Supplier Warehouse',
+                'destination' => 'Erbil Import Hub',
             ], [
                 'driver_id' => $driver->id,
+                'product_platform' => 'amazon',
+                'product_url' => 'https://www.amazon.com/Example-Travel-Bag/dp/B09G9FPHY6',
+                'product_external_id' => 'B09G9FPHY6',
+                'product_title' => 'Example Travel Bag',
+                'product_color' => 'Black',
+                'product_size' => 'M',
                 'transit_countries' => [],
                 'weight_kg' => 4.5,
                 'size' => 'medium',
@@ -151,10 +163,16 @@ class LTMSSeeder extends Seeder
 
             $shipmentTwo = Shipment::updateOrCreate([
                 'customer_id' => $customer->id,
-                'origin' => 'Sulaimani Hub',
-                'destination' => 'Kirkuk Mall',
+                'origin' => 'Dubai Free Zone',
+                'destination' => 'Sulaimani Bazaar',
             ], [
                 'driver_id' => $driver->id,
+                'product_platform' => 'alibaba',
+                'product_url' => 'https://www.alibaba.com/product-detail/Glass-storage-set_1601234567890.html',
+                'product_external_id' => '1601234567890',
+                'product_title' => 'Glass Storage Set',
+                'product_color' => 'Clear',
+                'product_size' => '12 pcs',
                 'transit_countries' => [],
                 'weight_kg' => 12.0,
                 'size' => 'large',
@@ -173,10 +191,16 @@ class LTMSSeeder extends Seeder
 
             $shipmentThree = Shipment::updateOrCreate([
                 'customer_id' => $customer->id,
-                'origin' => 'Halabja Center',
-                'destination' => 'Erbil Airport Road',
+                'origin' => 'Guangzhou Electronics Market',
+                'destination' => 'Duhok Delivery Center',
             ], [
                 'driver_id' => $driver->id,
+                'product_platform' => 'alibaba',
+                'product_url' => 'https://www.alibaba.com/product-detail/Phone-accessory-kit_1601234567891.html',
+                'product_external_id' => '1601234567891',
+                'product_title' => 'Phone Accessory Kit',
+                'product_color' => 'White',
+                'product_size' => 'Standard',
                 'transit_countries' => [],
                 'weight_kg' => 2.3,
                 'size' => 'small',
@@ -196,7 +220,7 @@ class LTMSSeeder extends Seeder
             Report::updateOrCreate([
                 'shipment_id' => $shipmentOne->id,
             ], [
-                'customer_comment' => 'Package arrived late and the outer box was dented.',
+                'customer_comment' => 'Imported package arrived late and the outer box was dented.',
                 'staff_response' => null,
                 'status' => 'open',
                 'resolved_at' => null,
@@ -205,8 +229,8 @@ class LTMSSeeder extends Seeder
             Report::updateOrCreate([
                 'shipment_id' => $shipmentTwo->id,
             ], [
-                'customer_comment' => 'Fragile items were handled roughly during delivery.',
-                'staff_response' => 'We reviewed the route and issued a compensation voucher.',
+                'customer_comment' => 'Fragile imported items were handled roughly during delivery.',
+                'staff_response' => 'We reviewed the import route and issued a compensation voucher.',
                 'status' => 'resolved',
                 'resolved_at' => now()->subDay(),
             ]);
@@ -214,7 +238,7 @@ class LTMSSeeder extends Seeder
             Report::updateOrCreate([
                 'shipment_id' => $shipmentThree->id,
             ], [
-                'customer_comment' => 'Driver marked the shipment delivered before arrival.',
+                'customer_comment' => 'Driver marked the imported goods delivered before arrival.',
                 'staff_response' => null,
                 'status' => 'open',
                 'resolved_at' => null,
