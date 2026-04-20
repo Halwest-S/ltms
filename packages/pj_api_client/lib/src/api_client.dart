@@ -23,6 +23,9 @@ class ApiClient {
 
   void setToken(String? token) => _interceptor.setToken(token);
 
+  // Public content
+  Future<Response> getFaqs() => _dio.get('/api/v1/faqs');
+
   // Auth
   Future<Response> login(
     String email,

@@ -41,9 +41,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   late final Animation<double> _greetOpacity;
 
   // â”€â”€ FAQ card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  late final Animation<double> _faqOpacity;
-  late final Animation<Offset> _faqSlide;
-
   @override
   void initState() {
     super.initState();
@@ -131,21 +128,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       CurvedAnimation(
         parent: _entranceCtrl,
         curve: const Interval(0.42, 0.64, curve: Curves.easeOut),
-      ),
-    );
-
-    // â”€â”€ FAQ card â”€â”€
-    _faqSlide = Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero)
-        .animate(
-          CurvedAnimation(
-            parent: _entranceCtrl,
-            curve: const Interval(0.72, 1.00, curve: Curves.easeOutCubic),
-          ),
-        );
-    _faqOpacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.72, 0.96, curve: Curves.easeOut),
       ),
     );
 
@@ -511,57 +493,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ),
                 ),
                 error: (e, _) => Text('${L10n.of(context)!.error}: $e'),
-              ),
-              const SizedBox(height: 8),
-
-              // â”€â”€ FAQ Link â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-              AnimatedBuilder(
-                animation: _entranceCtrl,
-                builder: (_, child) => SlideTransition(
-                  position: _faqSlide,
-                  child: FadeTransition(opacity: _faqOpacity, child: child),
-                ),
-                child: _TappableCard(
-                  onTap: () => context.push('/faq'),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: AppTheme.tealLight,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '\u{2753}',
-                            style: TextStyle(fontSize: 18),
-                          ), // Question ❓
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.helpAndFaq,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            Text(
-                              l10n.findAnswers,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        '\u{203A}', // Arrow ›
-                        style: TextStyle(color: AppTheme.muted, fontSize: 22),
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ],
           ),
