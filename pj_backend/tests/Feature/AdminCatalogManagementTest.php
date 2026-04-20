@@ -88,6 +88,37 @@ class AdminCatalogManagementTest extends TestCase
         ]);
     }
 
+    public function test_motorcycle_is_not_returned_as_an_active_transport_option(): void
+    {
+        $this->actAsSuperAdmin();
+
+        VehicleType::create([
+            'name_en' => 'Motorcycle',
+            'name_ku' => 'Motorcycle',
+            'transport_method' => 'ground',
+            'multiplier' => 1,
+            'delivery_days_offset' => 0,
+        ]);
+
+        VehicleType::create([
+            'name_en' => 'Truck',
+            'name_ku' => 'Truck',
+            'transport_method' => 'ground',
+            'multiplier' => 1.5,
+            'delivery_days_offset' => 2,
+        ]);
+
+        $this->getJson('/api/v1/admin/vehicles')
+            ->assertOk()
+            ->assertJsonMissing(['name_en' => 'Motorcycle'])
+            ->assertJsonFragment(['name_en' => 'Truck']);
+
+        $this->getJson('/api/v1/transport-options')
+            ->assertOk()
+            ->assertJsonMissing(['name_en' => 'Motorcycle'])
+            ->assertJsonFragment(['name_en' => 'Truck']);
+    }
+
     public function test_super_admin_can_delete_unused_category_and_vehicle_type(): void
     {
         $this->actAsSuperAdmin();

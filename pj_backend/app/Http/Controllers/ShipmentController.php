@@ -236,6 +236,7 @@ class ShipmentController extends Controller
     {
         return response()->json(
             VehicleType::query()
+                ->where('name_en', '!=', 'Motorcycle')
                 ->orderByRaw("CASE transport_method WHEN 'air' THEN 1 WHEN 'ground' THEN 2 WHEN 'sea' THEN 3 ELSE 4 END")
                 ->orderBy('name_en')
                 ->get()

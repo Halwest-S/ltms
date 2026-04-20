@@ -56,5 +56,9 @@ class UpdateVehicleTypesSeeder extends Seeder
             'transport_method' => 'sea',
             'icon' => '🚢',
         ]);
+
+        VehicleType::where('name_en', 'Motorcycle')
+            ->whereDoesntHave('shipments')
+            ->delete();
     }
 }

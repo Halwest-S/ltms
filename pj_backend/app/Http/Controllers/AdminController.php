@@ -139,7 +139,11 @@ class AdminController extends Controller
     // Vehicle Types
     public function vehicleTypes()
     {
-        return response()->json(VehicleType::all());
+        return response()->json(
+            VehicleType::query()
+                ->where('name_en', '!=', 'Motorcycle')
+                ->get()
+        );
     }
 
     public function storeVehicleType(Request $request)

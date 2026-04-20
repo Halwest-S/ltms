@@ -24,6 +24,64 @@ final vehiclesProvider = FutureProvider<List<Map<String, dynamic>>>((
 class CatalogManagementScreen extends ConsumerWidget {
   const CatalogManagementScreen({super.key});
 
+  IconData _categoryIcon(Map<String, dynamic> category) {
+    final name = (category['name_en'] ?? category['name_ku'] ?? '')
+        .toString()
+        .toLowerCase();
+
+    if (name.contains('fragile')) {
+      return Icons.wine_bar_outlined;
+    }
+    if (name.contains('electronic') || name.contains('device')) {
+      return Icons.devices_other_outlined;
+    }
+    if (name.contains('medical')) {
+      return Icons.medical_services_outlined;
+    }
+    if (name.contains('food')) {
+      return Icons.restaurant_outlined;
+    }
+
+    return Icons.inventory_2_outlined;
+  }
+
+  IconData _vehicleIcon(Map<String, dynamic> vehicle) {
+    final method = (vehicle['transport_method'] ?? '').toString();
+    final name = (vehicle['name_en'] ?? vehicle['name_ku'] ?? '')
+        .toString()
+        .toLowerCase();
+
+    if (method == 'air' || name.contains('air') || name.contains('plane')) {
+      return Icons.flight_takeoff;
+    }
+    if (method == 'sea' || name.contains('ship') || name.contains('boat')) {
+      return Icons.directions_boat;
+    }
+    if (name.contains('van')) {
+      return Icons.airport_shuttle;
+    }
+    if (name.contains('truck')) {
+      return Icons.local_shipping;
+    }
+    if (name.contains('car')) {
+      return Icons.directions_car;
+    }
+
+    return Icons.local_shipping;
+  }
+
+  String _transportLabel(BuildContext context, Map<String, dynamic> vehicle) {
+    final l10n = L10n.of(context)!;
+    final method = (vehicle['transport_method'] ?? '').toString();
+    final isKurdish = l10n.localeName == 'ku';
+
+    return switch (method) {
+      'air' => isKurdish ? 'هەوایی' : 'Air freight',
+      'sea' => isKurdish ? 'دەریایی' : 'Sea freight',
+      _ => isKurdish ? 'وشکانی' : 'Land transport',
+    };
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tt = Theme.of(context).textTheme;
@@ -54,7 +112,7 @@ class CatalogManagementScreen extends ConsumerWidget {
               Text(l10n.catalogManagement, style: tt.headlineLarge),
               const SizedBox(height: 4),
               Text(
-                'Review the current shipping categories and vehicle types.',
+                'Review import categories, surcharges, and transport options used for pricing.',
                 style: tt.bodyMedium?.copyWith(color: AppTheme.muted),
               ),
               const SizedBox(height: 20),
@@ -89,6 +147,12 @@ class CatalogManagementScreen extends ConsumerWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            Icon(
+                              _categoryIcon(c),
+                              size: 18,
+                              color: AppTheme.teal,
+                            ),
+                            const SizedBox(width: 8),
                             Text(
                               l10n.localeName == 'ku'
                                   ? (c['name_ku'] ?? c['name_en'] ?? '')
@@ -141,15 +205,9 @@ class CatalogManagementScreen extends ConsumerWidget {
                 spacing: 10,
                 runSpacing: 10,
                 children: vehs.map((v) {
-                  final emoji = switch (v['name_en']
-                      ?.toString()
-                      .toLowerCase()) {
-                    'truck' => '🚛',
-                    'van' => '🚐',
-                    'air cargo' || 'air' => '✈️',
-                    'motorcycle' => '🏍️',
-                    _ => '🚗',
-                  };
+                  final icon = _vehicleIcon(v);
+                  final transportLabel = _transportLabel(context, v);
+
                   return Container(
                     width: isCompact ? double.infinity : 220,
                     constraints: isCompact
@@ -164,7 +222,15 @@ class CatalogManagementScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(emoji, style: const TextStyle(fontSize: 28)),
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: AppTheme.tealLight,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(icon, color: AppTheme.teal, size: 26),
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           l10n.localeName == 'ku'
@@ -174,6 +240,15 @@ class CatalogManagementScreen extends ConsumerWidget {
                             fontSize: 15,
                             fontWeight: FontWeight.w800,
                             color: AppTheme.ink,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          transportLabel,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.muted,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -191,7 +266,7 @@ class CatalogManagementScreen extends ConsumerWidget {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                '×${v['multiplier']}',
+                                'x${v['multiplier']}',
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
