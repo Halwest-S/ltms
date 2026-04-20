@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pj_l10n/pj_l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -42,13 +43,15 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
       id: 'amazon',
       name: 'Amazon',
       url: 'https://www.amazon.com/',
-      icon: Icons.shopping_bag_outlined,
+      logoAsset: 'assets/brand/amazon.svg',
+      logoWidth: 120,
     ),
     _Marketplace(
       id: 'alibaba',
       name: 'Alibaba',
       url: 'https://www.alibaba.com/',
-      icon: Icons.storefront_outlined,
+      logoAsset: 'assets/brand/alibaba.svg',
+      logoWidth: 158,
     ),
   ];
 
@@ -375,7 +378,18 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(platform.icon, color: AppTheme.ink, size: 28),
+          SizedBox(
+            height: 38,
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: SvgPicture.asset(
+                platform.logoAsset,
+                width: platform.logoWidth,
+                fit: BoxFit.contain,
+                semanticsLabel: platform.name,
+              ),
+            ),
+          ),
           const SizedBox(height: 10),
           Text(platform.name, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 10),
@@ -716,9 +730,13 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
                 color: AppTheme.tealLight,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                _transportIcon(option.transportMethod),
-                color: AppTheme.teal,
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: SvgPicture.asset(
+                  _transportIconAsset(option.transportMethod),
+                  fit: BoxFit.contain,
+                  semanticsLabel: _methodLabel(option.transportMethod),
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -1241,11 +1259,11 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
     };
   }
 
-  IconData _transportIcon(String method) {
+  String _transportIconAsset(String method) {
     return switch (method) {
-      'air' => Icons.flight_takeoff,
-      'sea' => Icons.directions_boat_filled_outlined,
-      _ => Icons.local_shipping_outlined,
+      'air' => 'assets/icons/transport_air.svg',
+      'sea' => 'assets/icons/transport_sea.svg',
+      _ => 'assets/icons/transport_land.svg',
     };
   }
 
@@ -1356,13 +1374,15 @@ class _Marketplace {
     required this.id,
     required this.name,
     required this.url,
-    required this.icon,
+    required this.logoAsset,
+    required this.logoWidth,
   });
 
   final String id;
   final String name;
   final String url;
-  final IconData icon;
+  final String logoAsset;
+  final double logoWidth;
 }
 
 class _TransportOption {
