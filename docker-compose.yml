@@ -6,6 +6,8 @@ services:
       POSTGRES_DB: ${DB_DATABASE:-transportation_management_system}
       POSTGRES_USER: ${DB_USERNAME:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    ports:
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
