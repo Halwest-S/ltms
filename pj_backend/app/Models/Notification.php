@@ -9,6 +9,7 @@ class Notification extends Model
 {
     protected $fillable = [
         'user_id',
+        'shipment_id',
         'message_en',
         'message_ku',
         'type',
@@ -19,10 +20,16 @@ class Notification extends Model
 
     protected $casts = [
         'is_read' => 'boolean',
+        'user_id' => 'integer',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function shipment(): BelongsTo
+    {
+        return $this->belongsTo(Shipment::class);
     }
 }

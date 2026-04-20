@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
+use App\Models\Shipment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +14,7 @@ class NotificationController extends Controller
     {
         $notifications = $request->user()
             ->notifications()
+            ->with('shipment:id,status,destination,estimated_delivery_days,total_price')
             ->latest()
             ->paginate(15);
 
@@ -72,6 +74,21 @@ class NotificationController extends Controller
             ], 422);
         }
 
+        $shipmentId = $request->input('shipment_id');
+        if ($shipmentId !== null) {
+            $shipment = Shipment::findOrFail($shipmentId);
+
+            $isRecipientShipment = $recipient->role === 'customer'
+                ? $shipment->customer_id === $recipient->id
+                : $shipment->driver_id === $recipient->id;
+
+            if (!$isRecipientShipment) {
+                return response()->json([
+                    'message' => 'The selected shipment is not linked to this recipient.',
+                ], 422);
+            }
+        }
+
         // Handle image upload
         $imageUrl = null;
         if ($request->hasFile('image')) {
@@ -80,16 +97,20 @@ class NotificationController extends Controller
         }
 
         $notification = Notification::create([
-            'user_id'    => $recipient->id,
+            'user_id' => $recipient->id,
+            'shipment_id' => $shipmentId,
             'message_en' => $request->message_en,
             'message_ku' => $request->message_ku,
-            'type'       => 'status_update',
-            'location'   => $request->location,
-            'image_url'  => $imageUrl,
-            'is_read'    => false,
+            'type' => 'status_update',
+            'location' => $request->location,
+            'image_url' => $imageUrl,
+            'is_read' => false,
         ]);
 
-        return response()->json($notification, 201);
+        return response()->json(
+            $notification->load('shipment:id,status,destination,estimated_delivery_days,total_price'),
+            201
+        );
     }
 
     /**
@@ -120,7 +141,10 @@ class NotificationController extends Controller
             return response()->json(['message' => 'Forbidden.'], 403);
         }
 
-        $notifications = Notification::with('user:id,name,email,phone_number,role')
+        $notifications = Notification::with([
+            'user:id,name,email,phone_number,role',
+            'shipment:id,status,destination,estimated_delivery_days,total_price',
+        ])
             ->where('type', 'status_update')
             ->latest()
             ->paginate(20);

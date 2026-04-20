@@ -100,6 +100,7 @@ class ShipmentController extends Controller
 
             Notification::create([
                 'user_id' => $shipment->customer_id,
+                'shipment_id' => $shipment->id,
                 'message_en' => 'Your import request has been created and is currently pending.',
                 'message_ku' => 'داواکاری هاوردەکەت دروستکرا و لە ئێستادا چاوەڕوانە.',
                 'type' => 'status_update',

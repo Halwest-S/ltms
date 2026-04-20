@@ -71,4 +71,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class);
     }
+
+    public function resolvedReports(): HasMany
+    {
+        return $this->hasMany(Report::class, 'resolved_by_id');
+    }
 }
