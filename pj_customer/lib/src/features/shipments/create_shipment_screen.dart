@@ -20,8 +20,6 @@ class CreateShipmentScreen extends ConsumerStatefulWidget {
 class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
   final _productUrlCtrl = TextEditingController();
   final _destinationCtrl = TextEditingController();
-  final _colorCtrl = TextEditingController();
-  final _productSizeCtrl = TextEditingController();
   final _weightCtrl = TextEditingController();
   final _lengthCtrl = TextEditingController();
   final _widthCtrl = TextEditingController();
@@ -137,8 +135,6 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
   void dispose() {
     _productUrlCtrl.dispose();
     _destinationCtrl.dispose();
-    _colorCtrl.dispose();
-    _productSizeCtrl.dispose();
     _weightCtrl.dispose();
     _lengthCtrl.dispose();
     _widthCtrl.dispose();
@@ -180,8 +176,8 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
                 child: [
                   _buildProductStep,
                   _buildDestinationStep,
-                  _buildSpecsStep,
                   _buildShippingStep,
+                  _buildSpecsStep,
                   _buildReviewStep,
                 ][_step](tt),
               ),
@@ -196,8 +192,8 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
     final labels = [
       _t(ku: 'بەرهەم', en: 'Product'),
       _t(ku: 'گەیاندن', en: 'Delivery'),
-      _t(ku: 'وردەکاری', en: 'Specs'),
       _t(ku: 'گواستنەوە', en: 'Shipping'),
+      _t(ku: 'پاکێج', en: 'Package'),
       _t(ku: 'پێداچوونەوە', en: 'Review'),
     ];
 
@@ -794,37 +790,94 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
   }
 
   Widget _buildSpecsStep(TextTheme tt) {
+    final selectedTransport = _selectedTransport;
+    final isAir = selectedTransport?.transportMethod == 'air';
+    final isSea = selectedTransport?.transportMethod == 'sea';
+    final packageTitle = isAir
+        ? _t(ku: 'کێشی پاکێج', en: 'Package weight')
+        : _t(ku: 'قەبارەی پاکێج', en: 'Package dimensions');
+    final packageNote = isAir
+        ? _t(
+            ku: 'بۆ گواستنەوەی هەوایی تەنها کێشی پاکێج پێویستە؛ درێژی، پانی و بەرزی شاردرانەوە.',
+            en: 'Air shipping is priced by kilogram, so length, width, and height are hidden.',
+          )
+        : _t(
+            ku: isSea
+                ? 'بۆ گواستنەوەی دەریایی قەبارەی پاکێج پێویستە؛ کێش لەم شێوازەدا بەکارناهێنرێت.'
+                : 'بۆ گواستنەوەی وشکانی قەبارەی پاکێج پێویستە؛ کێش لەم شێوازەدا بەکارناهێنرێت.',
+            en: isSea
+                ? 'Sea shipping uses volumetric size, so package weight is hidden.'
+                : 'Land shipping uses volumetric size, so package weight is hidden.',
+          );
+
     return _screen(
-      keyValue: 2,
+      keyValue: 3,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            _t(ku: 'وردەکاری بەرهەم', en: 'Product specifications'),
+            _t(ku: 'وردەکاری پاکێج', en: 'Package details'),
             style: tt.displaySmall,
           ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _colorCtrl,
-            decoration: InputDecoration(
-              labelText: _t(ku: 'ڕەنگ', en: 'Color'),
-              hintText: _t(ku: 'نموونە: ڕەش', en: 'Example: Black'),
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _productSizeCtrl,
-            decoration: InputDecoration(
-              labelText: _t(ku: 'قەبارە', en: 'Size'),
-              hintText: _t(
-                ku: 'نموونە: M، 42، 256GB',
-                en: 'Example: M, 42, 256GB',
+          if (selectedTransport != null) ...[
+            const SizedBox(height: 10),
+            _sectionCard(
+              backgroundColor: AppTheme.tealLight,
+              borderColor: AppTheme.teal.withAlpha(70),
+              child: Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: AppTheme.card,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: SvgPicture.asset(
+                        _transportIconAsset(selectedTransport.transportMethod),
+                        fit: BoxFit.contain,
+                        semanticsLabel: _methodLabel(
+                          selectedTransport.transportMethod,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          selectedTransport.displayName(isKurdish: _isKurdish),
+                          style: const TextStyle(
+                            color: AppTheme.ink,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        Text(
+                          _methodLabel(selectedTransport.transportMethod),
+                          style: const TextStyle(
+                            color: AppTheme.muted,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => setState(() => _step = 2),
+                    child: Text(_t(ku: 'گۆڕین', en: 'Change')),
+                  ),
+                ],
               ),
             ),
-          ),
+          ],
           const SizedBox(height: 16),
           Text(
-            _t(ku: 'جۆری بەرهەم', en: 'Product category'),
+            _t(ku: 'جۆری هاوردە', en: 'Import category'),
             style: tt.labelLarge,
           ),
           const SizedBox(height: 8),
@@ -847,62 +900,77 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Text(packageTitle, style: tt.labelLarge),
+                const SizedBox(height: 4),
                 Text(
-                  _t(
-                    ku: 'قەبارە و کێشی پاکێج',
-                    en: 'Package weight and dimensions',
-                  ),
-                  style: tt.labelLarge,
+                  packageNote,
+                  style: tt.bodySmall?.copyWith(color: AppTheme.muted),
                 ),
                 const SizedBox(height: 10),
-                TextField(
-                  controller: _weightCtrl,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: _t(ku: 'کێش بە کیلۆگرام', en: 'Weight in kg'),
-                    hintText: '2.5',
+                if (isAir)
+                  TextField(
+                    controller: _weightCtrl,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: _t(ku: 'کێش بە کیلۆگرام', en: 'Weight in kg'),
+                      hintText: '2.5',
+                    ),
+                  )
+                else
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _dimensionField(
+                          _lengthCtrl,
+                          _t(ku: 'درێژی', en: 'Length'),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _dimensionField(
+                          _widthCtrl,
+                          _t(ku: 'پانی', en: 'Width'),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _dimensionField(
+                          _heightCtrl,
+                          _t(ku: 'بەرزی', en: 'Height'),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _dimensionField(
-                        _lengthCtrl,
-                        _t(ku: 'درێژی', en: 'Length'),
-                      ),
+                if (!isAir) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    _t(
+                      ku: 'قەبارەکان بە سانتیمەتر بنووسە.',
+                      en: 'Enter dimensions in centimeters.',
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _dimensionField(
-                        _widthCtrl,
-                        _t(ku: 'پانی', en: 'Width'),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _dimensionField(
-                        _heightCtrl,
-                        _t(ku: 'بەرزی', en: 'Height'),
-                      ),
-                    ),
-                  ],
-                ),
+                    style: tt.bodySmall?.copyWith(color: AppTheme.muted),
+                  ),
+                ],
               ],
             ),
           ),
           const SizedBox(height: 18),
           ElevatedButton(
-            onPressed: () {
-              if (_validateSpecs()) {
-                setState(() => _step = 3);
-              }
-            },
-            child: Text(_t(ku: 'بەردەوامبوون', en: 'Continue')),
+            onPressed: _isLoadingPricing ? null : _continueToReview,
+            child: _isLoadingPricing
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.4,
+                      color: Colors.white,
+                    ),
+                  )
+                : Text(_t(ku: 'ژماردنی نرخ', en: 'Calculate Cost')),
           ),
           const SizedBox(height: 8),
           OutlinedButton(
-            onPressed: () => setState(() => _step = 1),
+            onPressed: () => setState(() => _step = 2),
             child: Text(_t(ku: 'گەڕانەوە', en: 'Back')),
           ),
         ],
@@ -924,7 +992,7 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
         : _transportOptions;
 
     return _screen(
-      keyValue: 3,
+      keyValue: 2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -950,21 +1018,17 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
             ],
           const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: _isLoadingPricing ? null : _continueToReview,
-            child: _isLoadingPricing
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.4,
-                      color: Colors.white,
-                    ),
-                  )
-                : Text(_t(ku: 'ژماردنی نرخ', en: 'Calculate Cost')),
+            onPressed: _vehicleTypeId == null
+                ? null
+                : () => setState(() {
+                    _pricing = null;
+                    _step = 3;
+                  }),
+            child: Text(_t(ku: 'بەردەوامبوون', en: 'Continue')),
           ),
           const SizedBox(height: 8),
           OutlinedButton(
-            onPressed: () => setState(() => _step = 2),
+            onPressed: () => setState(() => _step = 1),
             child: Text(_t(ku: 'گەڕانەوە', en: 'Back')),
           ),
         ],
@@ -1074,16 +1138,43 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
                     fontSize: 12,
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 Text(
-                  totalPrice == null
-                      ? '--'
-                      : '\$${totalPrice.toStringAsFixed(2)}',
+                  _t(ku: 'تێچووی گەیاندن', en: 'Delivery Cost'),
                   style: const TextStyle(
-                    color: Color(0xFFA7F3D0),
-                    fontSize: 34,
-                    fontWeight: FontWeight.w900,
+                    color: Colors.white70,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
                   ),
+                ),
+                const SizedBox(height: 6),
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.end,
+                  spacing: 6,
+                  runSpacing: 2,
+                  children: [
+                    Text(
+                      totalPrice == null
+                          ? '--'
+                          : '\$${totalPrice.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        color: Color(0xFFA7F3D0),
+                        fontSize: 34,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 6),
+                      child: Text(
+                        '+ Item Price',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -1112,19 +1203,11 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
                 _summaryRow(_t(ku: 'سەرچاوە', en: 'Source'), _sourceOrigin),
                 _summaryRow(
                   _t(ku: 'لینک', en: 'Link'),
-                  _productUrlCtrl.text.trim(),
+                  _shortProductUrl(_productUrlCtrl.text.trim()),
                 ),
                 _summaryRow(
                   _t(ku: 'گەیاندن', en: 'Delivery'),
                   _destinationCtrl.text.trim(),
-                ),
-                _summaryRow(
-                  _t(ku: 'ڕەنگ', en: 'Color'),
-                  _colorCtrl.text.trim(),
-                ),
-                _summaryRow(
-                  _t(ku: 'قەبارە', en: 'Size'),
-                  _productSizeCtrl.text.trim(),
                 ),
                 _summaryRow(
                   _t(ku: 'جۆر', en: 'Category'),
@@ -1217,6 +1300,54 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
         ],
       ),
     );
+  }
+
+  String _shortProductUrl(String rawUrl) {
+    final value = rawUrl.trim();
+    if (value.isEmpty) {
+      return value;
+    }
+
+    final uri = Uri.tryParse(value);
+    if (uri == null || uri.host.isEmpty) {
+      return _middleEllipsis(value, 72);
+    }
+
+    final host = uri.host.replaceFirst(RegExp(r'^www\.'), '');
+    final segments = uri.pathSegments.where((segment) => segment.isNotEmpty);
+    final pathSegments = segments.toList();
+    var displayPath = '';
+
+    if (host.contains('amazon.')) {
+      final dpIndex = pathSegments.indexWhere(
+        (segment) => segment.toLowerCase() == 'dp',
+      );
+      if (dpIndex >= 0 && dpIndex + 1 < pathSegments.length) {
+        displayPath = '/dp/${pathSegments[dpIndex + 1]}';
+      } else if (pathSegments.isNotEmpty) {
+        displayPath = '/${pathSegments.take(2).join('/')}';
+      }
+    } else if (host.contains('alibaba.')) {
+      final productSegment = pathSegments.isEmpty ? '' : pathSegments.last;
+      displayPath = productSegment.isEmpty
+          ? ''
+          : '/product/${_middleEllipsis(productSegment, 36)}';
+    } else if (pathSegments.isNotEmpty) {
+      displayPath = '/${pathSegments.take(2).join('/')}';
+    }
+
+    return _middleEllipsis('https://$host$displayPath', 72);
+  }
+
+  String _middleEllipsis(String value, int maxLength) {
+    if (value.length <= maxLength) {
+      return value;
+    }
+
+    final keep = maxLength - 3;
+    final start = (keep * 0.6).floor();
+    final end = keep - start;
+    return '${value.substring(0, start)}...${value.substring(value.length - end)}';
   }
 
   Future<void> _loadTransportOptions() async {
@@ -1336,24 +1467,6 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
     return true;
   }
 
-  bool _validateSpecs() {
-    if (_colorCtrl.text.trim().isEmpty) {
-      _showError(
-        _t(ku: 'ڕەنگی بەرهەم پێویستە.', en: 'Product color is required.'),
-      );
-      return false;
-    }
-
-    if (_productSizeCtrl.text.trim().isEmpty) {
-      _showError(
-        _t(ku: 'قەبارەی بەرهەم پێویستە.', en: 'Product size is required.'),
-      );
-      return false;
-    }
-
-    return true;
-  }
-
   Future<void> _continueToReview() async {
     if (_vehicleTypeId == null) {
       _showError(
@@ -1430,8 +1543,6 @@ class _CreateShipmentScreenState extends ConsumerState<CreateShipmentScreen> {
         'product_title': _productPreview?['title'],
         'product_image_url': _productPreview?['image_url'],
         'product_price': _productPreview?['price'],
-        'product_color': _colorCtrl.text.trim(),
-        'product_size': _productSizeCtrl.text.trim(),
         if (cargo.weight != null) 'weight_kg': cargo.weight,
         if (cargo.size != null) 'size': cargo.size,
         'category_id': _categoryId,

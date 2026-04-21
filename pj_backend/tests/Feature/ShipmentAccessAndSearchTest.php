@@ -76,8 +76,6 @@ class ShipmentAccessAndSearchTest extends TestCase
             'origin' => 'Istanbul Supplier Warehouse',
             'destination' => 'Erbil, Kurdistan',
             'product_url' => 'https://www.amazon.com/Example-Product/dp/B09G9FPHY6',
-            'product_color' => 'Black',
-            'product_size' => 'M',
             'weight_kg' => 12.5,
             'category_id' => $category->id,
             'vehicle_type_id' => $vehicleType->id,
@@ -86,8 +84,8 @@ class ShipmentAccessAndSearchTest extends TestCase
             ->assertJsonPath('destination', 'Erbil, Kurdistan')
             ->assertJsonPath('product_platform', 'amazon')
             ->assertJsonPath('product_external_id', 'B09G9FPHY6')
-            ->assertJsonPath('product_color', 'Black')
-            ->assertJsonPath('product_size', 'M');
+            ->assertJsonPath('product_color', null)
+            ->assertJsonPath('product_size', null);
 
         $this->assertDatabaseHas('shipments', [
             'customer_id' => $customer->id,
@@ -96,8 +94,8 @@ class ShipmentAccessAndSearchTest extends TestCase
             'product_platform' => 'amazon',
             'product_url' => 'https://www.amazon.com/Example-Product/dp/B09G9FPHY6',
             'product_external_id' => 'B09G9FPHY6',
-            'product_color' => 'Black',
-            'product_size' => 'M',
+            'product_color' => null,
+            'product_size' => null,
             'status' => 'pending',
         ]);
     }
@@ -149,8 +147,6 @@ class ShipmentAccessAndSearchTest extends TestCase
             'origin' => 'Erbil Warehouse',
             'destination' => 'Istanbul, Turkey',
             'product_url' => 'https://www.amazon.com/Example-Product/dp/B09G9FPHY6',
-            'product_color' => 'Black',
-            'product_size' => 'M',
             'weight_kg' => 12.5,
             'category_id' => $category->id,
             'vehicle_type_id' => $vehicleType->id,
@@ -175,8 +171,6 @@ class ShipmentAccessAndSearchTest extends TestCase
             'origin' => 'Erbil Warehouse',
             'destination' => 'Duhok Market',
             'product_url' => 'https://www.alibaba.com/product-detail/Example-product_1601234567890.html',
-            'product_color' => 'White',
-            'product_size' => '42',
             'weight_kg' => 12.5,
             'category_id' => $category->id,
             'vehicle_type_id' => $vehicleType->id,
