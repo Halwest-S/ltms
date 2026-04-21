@@ -21,6 +21,11 @@ class Shipment with _$Shipment {
     required String id,
     @JsonKey(name: 'customer_id') required int customerId,
     @JsonKey(name: 'driver_id') int? driverId,
+    @JsonKey(name: 'last_rejected_driver_id') int? lastRejectedDriverId,
+    @JsonKey(name: 'last_assignment_rejection_reason')
+    String? lastAssignmentRejectionReason,
+    @JsonKey(name: 'last_assignment_rejected_at')
+    DateTime? lastAssignmentRejectedAt,
     required String origin,
     required String destination,
     @JsonKey(name: 'product_platform') String? productPlatform,
@@ -46,6 +51,7 @@ class Shipment with _$Shipment {
     @JsonKey(name: 'vehicle_type') VehicleType? vehicleType,
     User? customer,
     User? driver,
+    @JsonKey(name: 'last_rejected_driver') User? lastRejectedDriver,
     Report? report,
     @JsonKey(name: 'price_breakdown') Map<String, dynamic>? priceBreakdown,
   }) = _Shipment;

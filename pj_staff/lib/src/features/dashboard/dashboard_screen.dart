@@ -396,17 +396,7 @@ class _StaffDashboardScreenState extends ConsumerState<StaffDashboardScreen> {
                                             : (s.size ?? '--'),
                                       ),
                                     ),
-                                    DataCell(
-                                      _contactCell(
-                                        name: s.driverId == null
-                                            ? 'Unassigned'
-                                            : (s.driver?.name ??
-                                                  'Driver #${s.driverId}'),
-                                        email: s.driver?.email,
-                                        phone: s.driver?.phoneNumber,
-                                        muted: s.driverId == null,
-                                      ),
-                                    ),
+                                    DataCell(_driverCell(context, s)),
                                     DataCell(
                                       StatusBadge(
                                         status: s.status,
@@ -533,6 +523,72 @@ class _StaffDashboardScreenState extends ConsumerState<StaffDashboardScreen> {
             style: const TextStyle(fontSize: 11, color: AppTheme.muted),
           ),
       ],
+    );
+  }
+
+  Widget _driverCell(BuildContext context, Shipment shipment) {
+    final rejectionReason =
+        shipment.lastAssignmentRejectionReason?.trim() ?? '';
+    final hasRejection = rejectionReason.isNotEmpty;
+
+    if (shipment.driverId != null) {
+      return _contactCell(
+        name: shipment.driver?.name ?? 'Driver #${shipment.driverId}',
+        email: shipment.driver?.email,
+        phone: shipment.driver?.phoneNumber,
+      );
+    }
+
+    if (!hasRejection) {
+      return _contactCell(name: 'Unassigned', muted: true);
+    }
+
+    final rejectedBy =
+        shipment.lastRejectedDriver?.name ??
+        (shipment.lastRejectedDriverId == null
+            ? 'Driver'
+            : 'Driver #${shipment.lastRejectedDriverId}');
+    final isKurdish = L10n.of(context)?.localeName == 'ku';
+
+    return Tooltip(
+      message: rejectionReason,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.warning_amber_rounded,
+                size: 15,
+                color: AppTheme.red,
+              ),
+              const SizedBox(width: 5),
+              Flexible(
+                child: Text(
+                  isKurdish
+                      ? 'ڕەتکراوە لەلایەن $rejectedBy'
+                      : 'Rejected by $rejectedBy',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.red,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            isKurdish ? 'هۆکار: $rejectionReason' : 'Reason: $rejectionReason',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 11, color: AppTheme.muted),
+          ),
+        ],
+      ),
     );
   }
 

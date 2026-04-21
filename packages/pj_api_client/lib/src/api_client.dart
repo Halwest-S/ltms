@@ -106,6 +106,11 @@ class ApiClient {
       _dio.patch('/api/v1/shipments/$id/status', data: {'status': status});
   Future<Response> assignDriver(String id, int driverId) =>
       _dio.patch('/api/v1/shipments/$id/assign', data: {'driver_id': driverId});
+  Future<Response> rejectShipmentAssignment(String id, String reason) =>
+      _dio.patch(
+        '/api/v1/shipments/$id/assignment/reject',
+        data: {'reason': reason},
+      );
   Future<Response> calculatePricing({
     double? weight,
     String? size,

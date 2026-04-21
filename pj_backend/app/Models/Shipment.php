@@ -15,6 +15,9 @@ class Shipment extends Model
     protected $fillable = [
         'customer_id',
         'driver_id',
+        'last_rejected_driver_id',
+        'last_assignment_rejection_reason',
+        'last_assignment_rejected_at',
         'origin',
         'destination',
         'product_platform',
@@ -50,6 +53,8 @@ class Shipment extends Model
         'category_id' => 'integer',
         'vehicle_type_id' => 'integer',
         'driver_id' => 'integer',
+        'last_rejected_driver_id' => 'integer',
+        'last_assignment_rejected_at' => 'datetime',
         'delivery_confirmed_at' => 'datetime',
     ];
 
@@ -61,6 +66,11 @@ class Shipment extends Model
     public function driver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'driver_id');
+    }
+
+    public function lastRejectedDriver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'last_rejected_driver_id');
     }
 
     public function category(): BelongsTo

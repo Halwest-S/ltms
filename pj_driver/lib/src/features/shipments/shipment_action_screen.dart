@@ -100,7 +100,7 @@ class ShipmentActionScreen extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Action buttons
-              if (s.status == ShipmentStatus.pending)
+              if (s.status == ShipmentStatus.pending) ...[
                 ElevatedButton(
                   onPressed: () =>
                       _updateStatus(context, ref, ShipmentStatus.inTransit),
@@ -113,6 +113,21 @@ class ShipmentActionScreen extends ConsumerWidget {
                   ),
                   child: Text(l10n.acceptStartTransit),
                 ),
+                const SizedBox(height: 10),
+                OutlinedButton.icon(
+                  onPressed: () => _rejectAssignment(context, ref),
+                  icon: const Icon(Icons.close_rounded),
+                  label: Text(_rejectAssignmentLabel(context)),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.red,
+                    side: const BorderSide(color: AppTheme.red),
+                    minimumSize: const Size(double.infinity, 56),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                ),
+              ],
               if (s.status == ShipmentStatus.inTransit)
                 ElevatedButton(
                   onPressed: () =>
@@ -235,4 +250,116 @@ class ShipmentActionScreen extends ConsumerWidget {
       }
     }
   }
+
+  Future<void> _rejectAssignment(BuildContext context, WidgetRef ref) async {
+    final reason = await _showRejectReasonDialog(context);
+    if (reason == null || reason.trim().isEmpty) return;
+
+    try {
+      await ref
+          .read(apiClientProvider)
+          .rejectShipmentAssignment(shipmentId, reason.trim());
+
+      ref.invalidate(driverShipmentsProvider);
+      ref.invalidate(shipmentDetailProvider(shipmentId));
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_assignmentRejectedSuccess(context))),
+        );
+        context.go('/');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        final l10n = L10n.of(context)!;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('${l10n.error}: $e')));
+      }
+    }
+  }
+
+  Future<String?> _showRejectReasonDialog(BuildContext context) async {
+    final controller = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    final reason = await showDialog<String>(
+      context: context,
+      builder: (ctx) {
+        final l10n = L10n.of(ctx)!;
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          title: Text(_rejectReasonTitle(ctx)),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: controller,
+              autofocus: true,
+              maxLines: 5,
+              maxLength: 500,
+              textInputAction: TextInputAction.newline,
+              decoration: InputDecoration(
+                labelText: _reasonLabel(ctx),
+                hintText: _reasonHint(ctx),
+                alignLabelWithHint: true,
+              ),
+              validator: (value) {
+                final text = value?.trim() ?? '';
+                if (text.isEmpty) return _reasonRequired(ctx);
+                if (text.length < 10) return _reasonTooShort(ctx);
+                return null;
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  Navigator.pop(ctx, controller.text.trim());
+                }
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.red),
+              child: Text(_rejectAssignmentLabel(ctx)),
+            ),
+          ],
+        );
+      },
+    );
+
+    controller.dispose();
+    return reason;
+  }
+
+  bool _isKurdish(BuildContext context) => L10n.of(context)?.localeName == 'ku';
+
+  String _rejectAssignmentLabel(BuildContext context) =>
+      _isKurdish(context) ? 'ڕەتکردنەوەی ئەسپاردە' : 'Reject Assignment';
+
+  String _rejectReasonTitle(BuildContext context) => _isKurdish(context)
+      ? 'هۆکاری ڕەتکردنەوە بنووسە'
+      : 'Write the rejection reason';
+
+  String _reasonLabel(BuildContext context) =>
+      _isKurdish(context) ? 'هۆکار' : 'Reason';
+
+  String _reasonHint(BuildContext context) => _isKurdish(context)
+      ? 'بۆ نموونە: ناتوانم لەم کاتەدا گەیاندنەکە وەربگرم...'
+      : 'For example: I cannot handle this delivery at this time...';
+
+  String _reasonRequired(BuildContext context) =>
+      _isKurdish(context) ? 'هۆکار پێویستە' : 'Reason is required';
+
+  String _reasonTooShort(BuildContext context) => _isKurdish(context)
+      ? 'هۆکارەکە دەبێت لانیکەم ١٠ پیت بێت'
+      : 'Reason must be at least 10 characters';
+
+  String _assignmentRejectedSuccess(BuildContext context) => _isKurdish(context)
+      ? 'ئەسپاردەکە ڕەتکرایەوە و بۆ تیم نێردرا'
+      : 'Assignment rejected and sent to the team';
 }

@@ -188,9 +188,15 @@ class ShipmentController extends Controller
         }
 
         $shipment = Shipment::findOrFail($id);
+
+        if ($shipment->status !== 'pending') {
+            return response()->json([
+                'message' => 'Only pending imports can be assigned to a driver.',
+            ], 422);
+        }
         
         // Verify the user is a driver
-        $driver = \App\Models\User::findOrFail($request->driver_id);
+        $driver = User::findOrFail($request->driver_id);
         if ($driver->role !== 'driver') {
             return response()->json(['message' => 'The selected user is not a driver.'], 422);
         }
@@ -207,6 +213,69 @@ class ShipmentController extends Controller
         ]);
 
         return response()->json($shipment->load($this->shipmentRelations()));
+    }
+
+    public function rejectAssignment(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'reason' => 'required|string|min:10|max:500',
+        ]);
+
+        $user = $request->user();
+        if ($user->role !== 'driver') {
+            return response()->json(['message' => 'Only drivers can reject assignments.'], 403);
+        }
+
+        $shipment = Shipment::findOrFail($id);
+
+        if ($shipment->driver_id !== $user->id) {
+            return response()->json(['message' => 'This import is not assigned to you.'], 403);
+        }
+
+        if ($shipment->status !== 'pending') {
+            return response()->json([
+                'message' => 'Only pending assignments can be rejected.',
+            ], 422);
+        }
+
+        return DB::transaction(function () use ($shipment, $user, $validated) {
+            $reason = trim($validated['reason']);
+
+            $shipment->update([
+                'driver_id' => null,
+                'last_rejected_driver_id' => $user->id,
+                'last_assignment_rejection_reason' => $reason,
+                'last_assignment_rejected_at' => now(),
+            ]);
+
+            $shortId = substr($shipment->id, 0, 8);
+
+            Notification::create([
+                'user_id' => $shipment->customer_id,
+                'shipment_id' => $shipment->id,
+                'message_en' => "The assigned driver could not accept import #{$shortId}. Our team will assign another driver soon.",
+                'message_ku' => "شۆفێرەکە نەیتوانی هاوردەی #{$shortId} وەربگرێت. تیمەکەمان زوو شۆفێرێکی تر دەسپێرێت.",
+                'type' => 'status_update',
+                'is_read' => false,
+            ]);
+
+            User::query()
+                ->whereIn('role', ['staff', 'super_admin'])
+                ->where('is_active', true)
+                ->get(['id'])
+                ->each(function (User $recipient) use ($shipment, $user, $reason, $shortId) {
+                    Notification::create([
+                        'user_id' => $recipient->id,
+                        'shipment_id' => $shipment->id,
+                        'message_en' => "{$user->name} rejected import #{$shortId}. Reason: {$reason}",
+                        'message_ku' => "{$user->name} هاوردەی #{$shortId} ڕەتکردەوە. هۆکار: {$reason}",
+                        'type' => 'assignment',
+                        'is_read' => false,
+                    ]);
+                });
+
+            return response()->json($shipment->load($this->shipmentRelations()));
+        });
     }
 
     public function drivers()
@@ -269,6 +338,7 @@ class ShipmentController extends Controller
             'vehicleType',
             'customer:id,name,email,phone_number,role',
             'driver:id,name,email,phone_number,role',
+            'lastRejectedDriver:id,name,email,phone_number,role',
             'report.resolver:id,name,email,phone_number,role',
         ];
     }

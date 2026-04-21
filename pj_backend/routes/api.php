@@ -26,6 +26,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/shipments/{id}', [ShipmentController::class, 'show']);
         Route::patch('/shipments/{id}/status', [ShipmentController::class, 'updateStatus']);
         Route::patch('/shipments/{id}/assign', [ShipmentController::class, 'assignDriver']);
+        Route::patch('/shipments/{id}/assignment/reject', [ShipmentController::class, 'rejectAssignment']);
         Route::get('/pricing/calculate', [ShipmentController::class, 'calculatePreview']);
 
         // Reports
