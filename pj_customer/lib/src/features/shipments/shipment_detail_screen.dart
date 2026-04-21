@@ -152,6 +152,10 @@ class _ShipmentDetailBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _routeCard(context),
+          if (shipment.report != null) ...[
+            const SizedBox(height: 12),
+            _reportCard(context, shipment.report!),
+          ],
           const SizedBox(height: 12),
           Text(
             L10n.of(context)!.liveTracking,
@@ -257,6 +261,207 @@ class _ShipmentDetailBody extends StatelessWidget {
     required String en,
   }) {
     return L10n.of(context)!.localeName == 'ku' ? ku : en;
+  }
+
+  String _reportStatusLabel(BuildContext context, ReportStatus status) {
+    final l10n = L10n.of(context)!;
+    return switch (status) {
+      ReportStatus.open => l10n.open,
+      ReportStatus.resolved => l10n.resolved,
+      ReportStatus.rejected => l10n.rejectBtn,
+      ReportStatus.compensationIssued => l10n.compensationIssued,
+    };
+  }
+
+  Color _reportStatusColor(ReportStatus status) => switch (status) {
+    ReportStatus.open => AppTheme.amber,
+    ReportStatus.rejected => AppTheme.red,
+    _ => AppTheme.teal,
+  };
+
+  Color _reportStatusBackground(ReportStatus status) => switch (status) {
+    ReportStatus.open => AppTheme.amberLight,
+    ReportStatus.rejected => AppTheme.redLight,
+    _ => AppTheme.tealLight,
+  };
+
+  Widget _reportCard(BuildContext context, Report report) {
+    final response = report.staffResponse?.trim();
+    final hasResponse = response != null && response.isNotEmpty;
+    final responder = report.resolver?.name.trim();
+    final statusColor = _reportStatusColor(report.status);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.card,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppTheme.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: _reportStatusBackground(report.status),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  hasResponse
+                      ? Icons.mark_chat_read_outlined
+                      : Icons.support_agent_rounded,
+                  color: statusColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _screenText(
+                        context,
+                        ku: 'دۆخی ڕاپۆرت',
+                        en: 'Report status',
+                      ),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      _screenText(
+                        context,
+                        ku: hasResponse
+                            ? 'تیمەکەمان وەڵامی داواکارییەکەت داوەتەوە'
+                            : 'تیمەکەمان پێداچوونەوەی بۆ داواکارییەکەت دەکات',
+                        en: hasResponse
+                            ? 'Our team responded to your request'
+                            : 'Our team is reviewing your request',
+                      ),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.muted,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: _reportStatusBackground(report.status),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Text(
+                  _reportStatusLabel(context, report.status),
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.surface,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              report.customerComment,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppTheme.ink,
+                height: 1.45,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: hasResponse ? AppTheme.tealLight : AppTheme.amberLight,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: hasResponse
+                    ? AppTheme.teal.withAlpha(55)
+                    : AppTheme.amber.withAlpha(55),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _screenText(
+                    context,
+                    ku: hasResponse ? 'وەڵامی تیم' : 'چاوەڕوانی وەڵامی تیم',
+                    en: hasResponse
+                        ? 'Team response'
+                        : 'Waiting for team response',
+                  ),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: hasResponse
+                        ? const Color(0xFF065F46)
+                        : const Color(0xFF92400E),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  hasResponse
+                      ? response
+                      : _screenText(
+                          context,
+                          ku: 'کاتێک کارمەند یان بەڕێوەبەر وەڵام بداتەوە، لێرە پیشان دەدرێت.',
+                          en: 'When staff or admin responds, the answer will show here.',
+                        ),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppTheme.ink,
+                    height: 1.45,
+                  ),
+                ),
+                if (hasResponse &&
+                    responder != null &&
+                    responder.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    _screenText(
+                      context,
+                      ku: 'وەڵامدەر: $responder',
+                      en: 'Responded by $responder',
+                    ),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppTheme.muted,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildTimeline(

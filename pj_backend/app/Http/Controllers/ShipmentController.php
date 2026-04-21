@@ -113,10 +113,7 @@ class ShipmentController extends Controller
 
     public function show($id)
     {
-        $shipment = Shipment::with([
-            ...$this->shipmentRelations(),
-            'report',
-        ])->findOrFail($id);
+        $shipment = Shipment::with($this->shipmentRelations())->findOrFail($id);
         $user = auth()->user();
 
         if ($user->role === 'customer' && $shipment->customer_id !== $user->id) {
@@ -272,6 +269,7 @@ class ShipmentController extends Controller
             'vehicleType',
             'customer:id,name,email,phone_number,role',
             'driver:id,name,email,phone_number,role',
+            'report.resolver:id,name,email,phone_number,role',
         ];
     }
 }

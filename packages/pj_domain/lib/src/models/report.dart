@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'user.dart';
 
 part 'report.freezed.dart';
 part 'report.g.dart';
@@ -19,6 +20,7 @@ class Report with _$Report {
     @JsonKey(name: 'customer_comment') required String customerComment,
     @JsonKey(name: 'staff_response') String? staffResponse,
     @Default(ReportStatus.open) ReportStatus status,
+    User? resolver,
     @JsonKey(name: 'resolved_at') DateTime? resolvedAt,
   }) = _Report;
 

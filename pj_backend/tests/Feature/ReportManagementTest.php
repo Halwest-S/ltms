@@ -165,6 +165,13 @@ class ReportManagementTest extends TestCase
             'status' => 'resolved',
         ]);
 
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $customer->id,
+            'shipment_id' => $shipment->id,
+            'type' => 'report_update',
+            'is_read' => false,
+        ]);
+
         $adminShipment = $this->createShipmentFor($customer);
         $adminReport = Report::create([
             'shipment_id' => $adminShipment->id,
@@ -187,6 +194,13 @@ class ReportManagementTest extends TestCase
             'id' => $adminReport->id,
             'resolved_by_id' => $superAdmin->id,
             'status' => 'compensation_issued',
+        ]);
+
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $customer->id,
+            'shipment_id' => $adminShipment->id,
+            'type' => 'report_update',
+            'is_read' => false,
         ]);
     }
 }

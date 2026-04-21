@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\Report;
 use App\Models\Shipment;
 use Illuminate\Http\Request;
@@ -96,6 +97,21 @@ class ReportController extends Controller
         }
 
         $report->update($data);
+        $report->loadMissing('shipment:id,customer_id');
+
+        if ($report->shipment !== null) {
+            $shortShipmentId = substr((string) $report->shipment_id, 0, 8);
+            $responderName = $request->user()->name;
+
+            Notification::create([
+                'user_id' => $report->shipment->customer_id,
+                'shipment_id' => $report->shipment_id,
+                'message_en' => "{$responderName} responded to your report for import #{$shortShipmentId}.",
+                'message_ku' => "{$responderName} وەڵامی ڕاپۆرتەکەت بۆ هاوردەی #{$shortShipmentId} نارد.",
+                'type' => 'report_update',
+                'is_read' => false,
+            ]);
+        }
 
         return response()->json(
             $report->load('resolver:id,name,email,phone_number,role')

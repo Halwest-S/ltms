@@ -479,6 +479,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                 : s.size ?? '',
                             price: s.totalPrice,
                             status: s.status.name,
+                            reportResponse: s.report?.staffResponse,
                             onTap: () => context.push('/shipments/${s.id}'),
                           ),
                         ),
@@ -696,6 +697,7 @@ class _TappableCardState extends State<_TappableCard>
 
 class _ShipmentCard extends StatefulWidget {
   final String origin, destination, id, status, weightOrSize;
+  final String? reportResponse;
   final double price;
   final VoidCallback onTap;
 
@@ -706,6 +708,7 @@ class _ShipmentCard extends StatefulWidget {
     required this.weightOrSize,
     required this.price,
     required this.status,
+    this.reportResponse,
     required this.onTap,
   });
 
@@ -740,6 +743,13 @@ class _ShipmentCardState extends State<_ShipmentCard>
 
   @override
   Widget build(BuildContext context) {
+    final reportResponse = widget.reportResponse?.trim();
+    final hasReportResponse =
+        reportResponse != null && reportResponse.isNotEmpty;
+    final responseLabel = L10n.of(context)!.localeName == 'ku'
+        ? 'وەڵام بۆ ڕاپۆرتەکەت نێردرا'
+        : 'Team responded to this report';
+
     return GestureDetector(
       onTapDown: (_) => _ctrl.forward(),
       onTapUp: (_) {
@@ -802,6 +812,54 @@ class _ShipmentCardState extends State<_ShipmentCard>
                   ),
                 ],
               ),
+              if (hasReportResponse) ...[
+                const SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppTheme.tealLight,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppTheme.teal.withAlpha(55)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.mark_chat_read_outlined,
+                        color: AppTheme.teal,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              responseLabel,
+                              style: const TextStyle(
+                                color: Color(0xFF065F46),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              reportResponse,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppTheme.muted,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ],
           ),
         ),

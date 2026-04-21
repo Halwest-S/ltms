@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'category.dart';
+import 'report.dart';
 import 'user.dart';
 import 'vehicle_type.dart';
 
@@ -45,6 +46,7 @@ class Shipment with _$Shipment {
     @JsonKey(name: 'vehicle_type') VehicleType? vehicleType,
     User? customer,
     User? driver,
+    Report? report,
     @JsonKey(name: 'price_breakdown') Map<String, dynamic>? priceBreakdown,
   }) = _Shipment;
 
