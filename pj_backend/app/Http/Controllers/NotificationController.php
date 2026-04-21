@@ -93,7 +93,7 @@ class NotificationController extends Controller
         $imageUrl = null;
         if ($request->hasFile('image')) {
             $path     = $request->file('image')->store('notifications', 'public');
-            $imageUrl = Storage::url($path);
+            $imageUrl = Storage::disk('public')->url($path);
         }
 
         $notification = Notification::create([

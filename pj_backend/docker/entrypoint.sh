@@ -50,6 +50,11 @@ fwrite(STDERR, "Database connection failed.\n");
 exit(1);
 '
 
+if [ -d public/storage ] && [ ! -L public/storage ]; then
+  cp -a public/storage/. storage/app/public/ 2>/dev/null || true
+  rm -rf public/storage
+fi
+
 php artisan storage:link >/dev/null 2>&1 || true
 php artisan migrate --force
 php artisan db:seed --force
