@@ -12,7 +12,7 @@ use App\Models\VehicleType;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class LTMSSeeder extends Seeder
+class ApplicationDataSeeder extends Seeder
 {
     private const DEFAULT_SUPER_ADMIN_KEY = '11111111-1111-1111-1111-111111111111';
 

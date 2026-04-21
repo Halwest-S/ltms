@@ -27,8 +27,8 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
-            LTMSSeeder::class,
-            UpdateVehicleTypesSeeder::class,
+            ApplicationDataSeeder::class,
+            TransportOptionsSeeder::class,
         ]);
     }
 }

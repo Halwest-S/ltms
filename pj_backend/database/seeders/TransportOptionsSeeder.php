@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\VehicleType;
 use Illuminate\Database\Seeder;
 
-class UpdateVehicleTypesSeeder extends Seeder
+class TransportOptionsSeeder extends Seeder
 {
     public function run(): void
     {
